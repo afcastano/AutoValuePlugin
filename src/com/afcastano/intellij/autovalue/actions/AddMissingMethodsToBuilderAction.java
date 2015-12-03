@@ -63,15 +63,6 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
 
     }
 
-    @Nullable
-    private PsiClass findTargetClass(AnActionEvent e, PsiJavaFile javaFile) {
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
-
-        PsiElement element = javaFile.findElementAt(editor.getCaretModel().getOffset());
-
-        return PsiTreeUtil.getParentOfType(element, PsiClass.class);
-    }
-
     private void processClass(final PsiJavaFile javaFile, Project project, PsiElementFactory factory,
                               final PsiClass targetClass) {
         PsiType targetType = factory.createType(targetClass);
@@ -156,8 +147,18 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
         final PsiMethod builderMethod = factory.createMethod("builder", builderType);
         builderMethod.getModifierList().setModifierProperty("public", true);
         builderMethod.getModifierList().setModifierProperty("static", true);
+
+
+        String generatedName = "";
+
+        for(PsiClass parent: findAllParents(targetClass)) {
+            generatedName = generatedName + parent.getName() + "_";
+        }
+
+        generatedName = generatedName + targetClass.getName();
+
         PsiStatement returnStatement = factory
-                .createStatementFromText("return new AutoValue_" + targetClass.getName() + ".Builder();", targetClass);
+                .createStatementFromText("return new AutoValue_" + generatedName + ".Builder();", targetClass);
 
         builderMethod.getBody().add(returnStatement);
         return builderMethod;
@@ -229,6 +230,28 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
         }
 
         return false;
+    }
+
+    @Nullable
+    private PsiClass findTargetClass(AnActionEvent e, PsiJavaFile javaFile) {
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
+
+        PsiElement element = javaFile.findElementAt(editor.getCaretModel().getOffset());
+
+        return PsiTreeUtil.getParentOfType(element, PsiClass.class);
+    }
+
+    private List<PsiClass> findAllParents(PsiClass childClass) {
+        List<PsiClass> parents = new ArrayList<>();
+        PsiClass parent = PsiTreeUtil.getParentOfType(childClass, PsiClass.class);
+
+        if(parent == null) {
+            return parents;
+        }
+
+        parents.addAll(findAllParents(parent));
+        parents.add(parent);
+        return parents;
     }
 
 }
