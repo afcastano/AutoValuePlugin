@@ -81,8 +81,9 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
 
         }
 
+        final PsiMethod buildMethod = newBuildMethod(factory, targetType);
         if(!containsBuildMethod(builderClass)) {
-            builderClass.add(newBuildMethod(factory, targetType));
+            builderClass.add(buildMethod);
         }
 
         final PsiMethod builderFactoryMethod = newBuilderFactoryMethod(factory, targetClass, builderType);
@@ -101,7 +102,14 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
 
                 if(methodsToAdd.size() > 0) {
                     for(PsiMethod method: methodsToAdd) {
-                        builderClass.add(method);
+
+                        if(containsBuildMethod(builderClass)) {
+                            PsiMethod[] buildMethod = builderClass.findMethodsByName("build", false);
+                            builderClass.addBefore(method, buildMethod[0]);
+                        } else {
+                            builderClass.add(method);
+                        }
+
                     }
                 }
 
