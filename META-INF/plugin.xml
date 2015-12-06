@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.afcastano.intellij.autovalue</id>
     <name>AutoValue plugin</name>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <vendor email="andresfelipecastano@gmail.com" url="https://github.com/afcastano/AutoValuePlugin">AutoValue plugin</vendor>
 
     <description><![CDATA[
@@ -41,9 +41,9 @@
                     description="Generates the auto value builder from the abstract methods">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt B"/>
             </action>
-            <action id="com.afcastano.intellij.autovalue.SelectMethodsToAdd"
-                    class="com.afcastano.intellij.autovalue.actions.SelectMethodsToAddAction" text="SelectMethodsToAdd"
-                    description="Select methos to add to builder">
+            <action id="com.afcastano.intellij.autovalue.AddNewProperty"
+                    class="com.afcastano.intellij.autovalue.actions.AddNewPropertyAction" text="Add new property"
+                    description="Add new property to class">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt S"/>
             </action>
         </group>
