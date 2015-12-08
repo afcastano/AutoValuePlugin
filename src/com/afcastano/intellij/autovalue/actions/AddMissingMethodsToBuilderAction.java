@@ -23,6 +23,7 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
             factory = new AutoValueFactory(e);
         } catch (Exception e1) {
             e1.printStackTrace();
+            e.getPresentation().setEnabled(false);
             return;
         }
 

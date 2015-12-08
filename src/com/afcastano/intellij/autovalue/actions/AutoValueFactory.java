@@ -2,6 +2,7 @@ package com.afcastano.intellij.autovalue.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -9,6 +10,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierList;
@@ -23,7 +25,9 @@ import java.util.List;
 
 public class AutoValueFactory {
 
+    private static Logger LOG = Logger.getInstance(AutoValueFactory.class);
     private static final String AUTOVALUE_CLASS_NAME = "com.google.auto.value.AutoValue";
+
 
     private PsiType builderType;
     private PsiClass builderClass;
@@ -36,7 +40,16 @@ public class AutoValueFactory {
     private PsiMethod buildMehtod;
 
     public AutoValueFactory(AnActionEvent e) {
-        this.javaFile = (PsiJavaFile) e.getData(CommonDataKeys.PSI_FILE);
+
+        PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
+
+        if (file instanceof PsiJavaFile) {
+            this.javaFile = (PsiJavaFile) file;
+        } else {
+            LOG.debug("Not a java file");
+            throw new RuntimeException("Not a java file");
+        }
+
         Editor editor = e.getData(CommonDataKeys.EDITOR);
 
         if (editor == null || javaFile == null) {
