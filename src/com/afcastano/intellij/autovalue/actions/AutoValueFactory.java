@@ -187,16 +187,6 @@ public class AutoValueFactory {
         return findExistingBuilderClass(getTargetClass()) != null;
     }
 
-    public boolean containsAutoValueAnnotation() {
-        for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
-            if (getTargetClass().getModifierList().findAnnotation(autoValueAnnotationName) != null) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Nullable
     private PsiAnnotation findAutoValueAnnotationClass(PsiClass targetClass) {
         for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
