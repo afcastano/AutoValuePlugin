@@ -17,8 +17,9 @@ import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiStatement;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,12 @@ import java.util.List;
 public class AutoValueFactory {
 
     private static Logger LOG = Logger.getInstance(AutoValueFactory.class);
-    private static final String AUTOVALUE_CLASS_NAME = "com.google.auto.value.AutoValue";
-
+    private static final ImmutableList<String> SUPPORTED_AUTOVALUE_LIBRARIES =
+            ContainerUtil.immutableList(
+                    "com.google.auto.value.AutoValue",
+                    "auto.parcel.AutoParcel",
+                    "auto.parcelgson.AutoParcelGson"
+                    );
 
     private PsiType builderType;
     private PsiClass builderClass;
@@ -168,7 +173,13 @@ public class AutoValueFactory {
     }
 
     public boolean containsAutoValueAnnotation() {
-        return getTargetClass().getModifierList().findAnnotation(AUTOVALUE_CLASS_NAME) != null;
+        for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
+            if (getTargetClass().getModifierList().findAnnotation(autoValueAnnotationName) != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private PsiClass loadTargetClass(Editor editor, PsiJavaFile javaFile) {
