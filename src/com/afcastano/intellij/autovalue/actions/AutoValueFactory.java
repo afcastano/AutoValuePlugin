@@ -163,15 +163,6 @@ public class AutoValueFactory {
         return builderType;
     }
 
-    public PsiClass getAutoValueAnnotationClass() {
-        if (autoValueAnnotationClass == null) {
-            autoValueAnnotationClass = JavaPsiFacade.getInstance(getProject())
-                    .findClass(AUTOVALUE_CLASS_NAME, GlobalSearchScope.allScope(project));
-        }
-
-        return autoValueAnnotationClass;
-    }
-
     public boolean containsBuilderClass() {
         return findExistingBuilderClass(getTargetClass()) != null;
     }
