@@ -56,7 +56,7 @@ public class AutoValueFactory {
             throw new RuntimeException("No class selected");
         }
 
-        this.targetClass = loadTargetClass(editor);
+        this.targetClass = loadTargetClass(editor, javaFile);
         this.project = e.getProject();
         factory = JavaPsiFacade.getElementFactory(project);
 
@@ -180,9 +180,9 @@ public class AutoValueFactory {
         return getTargetClass().getModifierList().findAnnotation(AUTOVALUE_CLASS_NAME) != null;
     }
 
-    private PsiClass loadTargetClass(Editor editor) {
+    private PsiClass loadTargetClass(Editor editor, PsiJavaFile javaFile) {
         int caretOffset = editor.getCaretModel().getOffset();
-        PsiElement element = this.javaFile.findElementAt(caretOffset);
+        PsiElement element = javaFile.findElementAt(caretOffset);
 
         return PsiTreeUtil.getParentOfType(element, PsiClass.class);
     }
