@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
@@ -20,6 +21,8 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ImmutableList;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +44,7 @@ public class AutoValueFactory {
     private PsiElementFactory factory;
     private PsiJavaFile javaFile;
     private Project project;
-    private PsiClass autoValueAnnotationClass;
+    private PsiAnnotation autoValueAnnotation;
     private PsiMethod buildMehtod;
 
     public AutoValueFactory(AnActionEvent e) {
@@ -62,9 +65,19 @@ public class AutoValueFactory {
         }
 
         this.targetClass = loadTargetClass(editor, javaFile);
+
+        if (targetClass == null) {
+            throw new RuntimeException("Target class not found");
+        }
+
+        this.autoValueAnnotation = findAutoValueAnnotationClass(targetClass);
+
+        if (autoValueAnnotation == null) {
+            throw new RuntimeException("No auto value annotation detected");
+        }
+
         this.project = e.getProject();
         factory = JavaPsiFacade.getElementFactory(project);
-
     }
 
     public PsiClass getTargetClass() {
@@ -98,7 +111,7 @@ public class AutoValueFactory {
                 modifierList.setModifierProperty("public", true);
                 modifierList.setModifierProperty("static", true);
                 modifierList.setModifierProperty("abstract", true);
-                modifierList.addAnnotation("AutoValue.Builder");
+                modifierList.addAnnotation(autoValueAnnotation.getQualifiedName() + ".Builder");
 
                 this.builderClass = newBuilderClass;
 
@@ -152,8 +165,10 @@ public class AutoValueFactory {
 
         generatedName = generatedName + getTargetClass().getName();
 
-        PsiStatement returnStatement = factory
-                .createStatementFromText("return new AutoValue_" + generatedName + ".Builder();", getTargetClass());
+        String autoValueAnnotationName = StringUtil.getShortName(autoValueAnnotation.getQualifiedName());
+        String returnStatementText = "return new " + autoValueAnnotationName + "_" + generatedName + ".Builder();";
+
+        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
 
         builderMethod.getBody().add(returnStatement);
         return builderMethod;
@@ -180,6 +195,18 @@ public class AutoValueFactory {
         }
 
         return false;
+    }
+
+    @Nullable
+    private PsiAnnotation findAutoValueAnnotationClass(PsiClass targetClass) {
+        for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
+            PsiAnnotation autoValueAnnotation = getTargetClass().getModifierList().findAnnotation(autoValueAnnotationName);
+            if (autoValueAnnotation != null) {
+                return autoValueAnnotation;
+            }
+        }
+
+        return null;
     }
 
     private PsiClass loadTargetClass(Editor editor, PsiJavaFile javaFile) {
