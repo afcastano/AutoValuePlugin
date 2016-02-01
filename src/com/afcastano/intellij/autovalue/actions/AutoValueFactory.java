@@ -70,7 +70,7 @@ public class AutoValueFactory {
             throw new RuntimeException("Target class not found");
         }
 
-        this.autoValueAnnotation = findAutoValueAnnotationClass(targetClass);
+        this.autoValueAnnotation = findAutoValueAnnotationClass();
 
         if (autoValueAnnotation == null) {
             throw new RuntimeException("No auto value annotation detected");
@@ -188,7 +188,7 @@ public class AutoValueFactory {
     }
 
     @Nullable
-    private PsiAnnotation findAutoValueAnnotationClass(PsiClass targetClass) {
+    private PsiAnnotation findAutoValueAnnotationClass() {
         for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
             PsiAnnotation autoValueAnnotation = getTargetClass().getModifierList().findAnnotation(autoValueAnnotationName);
             if (autoValueAnnotation != null) {
@@ -206,6 +206,7 @@ public class AutoValueFactory {
         return PsiTreeUtil.getParentOfType(element, PsiClass.class);
     }
 
+    @Nullable
     private PsiClass findExistingBuilderClass(PsiClass targetClass) {
         for ( PsiClass clz: targetClass.getInnerClasses() ) {
             if(isBuilderClass(clz)) {
