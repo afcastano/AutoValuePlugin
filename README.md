@@ -2,7 +2,7 @@
 [Google AutoValue](https://github.com/google/auto) plugin for IntelliJ
 
 It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson).
-Thanks to @vjames19 for that!
+Thanks to [@vjames19](https://github.com/vjames19) for that!
 
 AutoValue is awesome.
 I can't explain it better than [that](https://github.com/google/auto/tree/master/value).
