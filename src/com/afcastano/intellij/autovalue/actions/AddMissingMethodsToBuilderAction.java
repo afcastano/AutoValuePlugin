@@ -43,16 +43,7 @@ public class AddMissingMethodsToBuilderAction extends AnAction {
             return;
         }
 
-        PsiClass targetClass = factory.getTargetClass();
-
-        if(targetClass == null) {
-            e.getPresentation().setEnabled(false);
-            return;
-        }
-
-        boolean isAnnotated = factory.containsAutoValueAnnotation();
-        e.getPresentation().setEnabled(isAnnotated);
-
+        e.getPresentation().setEnabled(true);
     }
 
     private void processClass(final AutoValueFactory factory) {
