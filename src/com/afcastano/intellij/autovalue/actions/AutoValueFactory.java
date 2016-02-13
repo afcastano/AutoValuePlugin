@@ -109,8 +109,8 @@ public class AutoValueFactory {
                 final PsiClass newBuilderClass = factory.createClass("Builder");
                 PsiModifierList modifierList = newBuilderClass.getModifierList();
                 modifierList.setModifierProperty("public", true);
-                modifierList.setModifierProperty("static", true);
                 modifierList.setModifierProperty("abstract", true);
+                modifierList.setModifierProperty("static", true);
                 modifierList.addAnnotation(autoValueAnnotation.getQualifiedName() + ".Builder");
 
                 this.builderClass = newBuilderClass;
