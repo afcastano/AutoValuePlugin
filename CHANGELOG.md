@@ -1,5 +1,9 @@
 Release 20160202
 --------
+* 2016-02-14: Changed the order of the Builder modifiers to make it JLS compliant.
+
+Release 20160202
+--------
 * 2016-02-02: Added @AutoParcel and @AutoParcelGson support.
 
 First Release
