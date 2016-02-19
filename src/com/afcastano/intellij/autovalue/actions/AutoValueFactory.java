@@ -123,9 +123,19 @@ public class AutoValueFactory {
     }
 
     public PsiMethod newBuilderSetter(PsiMethod getterMethod) {
-        final PsiMethod method = factory.createMethod(getterMethod.getName(), getBuilderType());
+        String name = getterMethod.getName();
+        if (name.startsWith("get") && name.length() > 3) {
+            if (Character.isUpperCase(name.charAt(3))) {
+                name = name.replaceFirst("get", "set");
+            }
+        } else if (name.startsWith("is") && name.length() > 2) {
+            if (Character.isUpperCase(name.charAt(2))) {
+                name = name.replaceFirst("is", "set");
+            }
+        }
+        final PsiMethod method = factory.createMethod(name, getBuilderType());
 
-        PsiParameter parameter = factory.createParameter(getterMethod.getName(), getterMethod.getReturnType());
+        PsiParameter parameter = factory.createParameter(name, getterMethod.getReturnType());
         method.getParameterList().add(parameter);
         method.getBody().delete();
         method.getModifierList().setModifierProperty("public", true);
