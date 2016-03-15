@@ -3,6 +3,10 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     @NonNls
@@ -89,8 +93,19 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     }
 
-    private void runAddMissingMethodsTest(String inputFile, String expectedFile, String library) {
-        myFixture.configureByFiles(inputFile, library);
+    public void testGeneratedSourcesAlreadyExist() {
+        runAddMissingMethodsTest("generatebuilder/alreadyhasgeneratedsources/Test.java",
+                "generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
+                "generatebuilder/alreadyhasgeneratedsources/AutoValue_BasicTestFile.java",
+                AUTOVALUE);
+    }
+
+    private void runAddMissingMethodsTest(String inputFile, String expectedFile, String... extraFiles) {
+        List<String> files = new ArrayList<>();
+        files.add(inputFile);
+        files.addAll(Arrays.asList(extraFiles));
+
+        myFixture.configureByFiles(files.toArray(new String[]{}));
         myFixture.testAction(new AddMissingMethodsToBuilderAction());
         myFixture.checkResultByFile(expectedFile, true);
     }
