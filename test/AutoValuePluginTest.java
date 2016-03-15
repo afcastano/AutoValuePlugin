@@ -2,7 +2,6 @@ import com.afcastano.intellij.autovalue.actions.AddMissingMethodsToBuilderAction
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.junit.Ignore;
 
 public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
@@ -24,79 +23,77 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testSimpleClass() {
 
-        myFixture.configureByFiles("generatebuilder/basic/BasicTestFile.java", AUTOVALUE);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/basic/BasicTestFile_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/basic/BasicTestFile.java",
+                "generatebuilder/basic/BasicTestFile_expected.java",
+                AUTOVALUE);
 
     }
 
     public void testNestedClasses() {
 
-        myFixture.configureByFiles("generatebuilder/nested/NestedClasses.java", AUTOVALUE);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/nested/NestedClasses_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/nested/NestedClasses.java",
+                "generatebuilder/nested/NestedClasses_expected.java",
+                AUTOVALUE);
 
     }
 
     public void testNonJavaFile() {
 
-        myFixture.configureByFiles("generatebuilder/nonJava/test.js");
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/nonJava/test.js", true);
+        runAddMissingMethodsTest("generatebuilder/nonJava/test.js",
+                "generatebuilder/nonJava/test.js",
+                AUTOVALUE);
 
     }
 
     public void testNotAnnotated() {
 
-        myFixture.configureByFiles("generatebuilder/notannotated/NotAnnotated.java");
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/notannotated/NotAnnotated.java", true);
-
-    }
-
-    @Ignore
-    public void testNotAbstract() {
-// TODO Add check to avoid non abstract java classes.
-//        myFixture.configureByFiles("generatebuilder/notabstract/Test.java", "com/google/auto/value/AutoValue.java");
-//        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-//        myFixture.checkResultByFile("generatebuilder/notabstract/Test.java", true);
+        runAddMissingMethodsTest("generatebuilder/notannotated/NotAnnotated.java",
+                "generatebuilder/notannotated/NotAnnotated.java",
+                AUTOVALUE);
 
     }
 
     public void testAddNewProperty() {
-        myFixture.configureByFiles("generatebuilder/addnewproperty/Test.java", AUTOVALUE);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/addnewproperty/Test_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/addnewproperty/Test.java",
+                "generatebuilder/addnewproperty/Test_expected.java",
+                AUTOVALUE);
 
     }
 
     public void testAddBuilderFactory() {
-        myFixture.configureByFiles("generatebuilder/addbuilderfactory/Test.java", AUTOVALUE);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/addbuilderfactory/Test_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/addbuilderfactory/Test.java",
+                "generatebuilder/addbuilderfactory/Test_expected.java",
+                AUTOVALUE);
 
     }
 
     public void testJavaBeanStyle() {
-        myFixture.configureByFiles("generatebuilder/javabeanstyle/Test.java", AUTOVALUE);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/javabeanstyle/Test_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/javabeanstyle/Test.java",
+                "generatebuilder/javabeanstyle/Test_expected.java",
+                AUTOVALUE);
 
     }
 
 
     public void testBasicAutoParcel() {
-        myFixture.configureByFiles("generatebuilder/basicautoparcel/Test.java", AUTOPARCEL);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/basicautoparcel/Test_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/basicautoparcel/Test.java",
+                "generatebuilder/basicautoparcel/Test_expected.java",
+                AUTOPARCEL);
 
     }
 
     public void testBasicAutoParcelGson() {
-        myFixture.configureByFiles("generatebuilder/basicautoparcelgson/Test.java", AUTOPARCEL_GSON);
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
-        myFixture.checkResultByFile("generatebuilder/basicautoparcelgson/Test_expected.java", true);
+        runAddMissingMethodsTest("generatebuilder/basicautoparcelgson/Test.java",
+                "generatebuilder/basicautoparcelgson/Test_expected.java",
+                AUTOPARCEL_GSON);
 
     }
+
+    private void runAddMissingMethodsTest(String inputFile, String expectedFile, String library) {
+        myFixture.configureByFiles(inputFile, library);
+        myFixture.testAction(new AddMissingMethodsToBuilderAction());
+        myFixture.checkResultByFile(expectedFile, true);
+    }
+
 
 }
