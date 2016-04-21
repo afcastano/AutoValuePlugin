@@ -13,5 +13,5 @@ Functionality:
 - It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson). Thanks to [@vjames19](https://github.com/vjames19)!
 
 
-Here is a short example video (1:50 mins):
+Here is a short tutorial video (1:50 mins):
 https://www.youtube.com/watch?v=8_HbI9RwiGw
