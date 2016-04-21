@@ -2,7 +2,7 @@
 [Google AutoValue](https://github.com/google/auto) plugin for IntelliJ
 
 AutoValue is awesome.
-I can't explain it better than [that](https://github.com/google/auto/blob/master/value/userguide/index.md), or [that](https://docs.google.com/presentation/d/14u_h-lMn7f1rXE1nDiLX0azS3IkgjGl5uxp5jGJ75RE/edit#slide=id.g2a5e9c4a8_00)
+I can't explain it better than [that](https://github.com/google/auto/blob/master/value/userguide/index.md), or [that](https://docs.google.com/presentation/d/14u_h-lMn7f1rXE1nDiLX0azS3IkgjGl5uxp5jGJ75RE/edit#slide=id.g2a5e9c4a8_00).
 
 Functionality:
 
@@ -14,4 +14,4 @@ Functionality:
 
 
 Here is a short example video (1:50 mins):
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/8_HbI9RwiGw/0.jpg)](http://www.youtube.com/watch?v=8_HbI9RwiGw)
+https://www.youtube.com/watch?v=8_HbI9RwiGw
