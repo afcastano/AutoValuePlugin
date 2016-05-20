@@ -6,7 +6,7 @@ ___
 IntelliJ should run using **JRE 1.7** or higher.
 The JRE version is shown in the about dialog.
 
-If you need to upgrade, folow this guide: https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under
+If you need to upgrade, folow this [guide](https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under).
 ___
 
 AutoValue is awesome.
