@@ -1,5 +1,5 @@
-# AutoValuePlugin
-[Google AutoValue](https://github.com/google/auto) plugin for IntelliJ
+# [AutoValuePlugin](https://plugins.jetbrains.com/plugin/8091?pr=idea)
+[Google AutoValue](https://github.com/google/auto) plugin for [IntelliJ](https://plugins.jetbrains.com/plugin/8091?pr=idea)
 
 ___
 ### Prerequisites
