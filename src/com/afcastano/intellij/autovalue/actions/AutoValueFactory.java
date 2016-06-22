@@ -47,9 +47,8 @@ public class AutoValueFactory {
     private PsiAnnotation autoValueAnnotation;
     private PsiMethod buildMehtod;
 
-    public AutoValueFactory(AnActionEvent e) {
-
-        PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
+    public AutoValueFactory(Project project, Editor editor, PsiFile file) {
+        this.project = project;
 
         if (file instanceof PsiJavaFile) {
             this.javaFile = (PsiJavaFile) file;
@@ -57,8 +56,6 @@ public class AutoValueFactory {
             LOG.debug("Not a java file");
             throw new RuntimeException("Not a java file");
         }
-
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
 
         if (editor == null || javaFile == null) {
             throw new RuntimeException("No class selected");
@@ -76,7 +73,6 @@ public class AutoValueFactory {
             throw new RuntimeException("No auto value annotation detected");
         }
 
-        this.project = e.getProject();
         factory = JavaPsiFacade.getElementFactory(project);
     }
 
@@ -201,6 +197,24 @@ public class AutoValueFactory {
         return findExistingBuilderClass(getTargetClass()) != null;
     }
 
+    public boolean isBuilderUpToDate() {
+        PsiClass builderClass = getBuilderClass();
+        if (builderClass == null) {
+            return false;
+        }
+        for (PsiMethod psiMethod : targetClass.getMethods()) {
+            if (isAbstractGetter(psiMethod) && !alreadyInBuilder(builderClass, psiMethod)) {
+                return false;
+            }
+        }
+        for (PsiMethod psiMethod : builderClass.getMethods()) {
+            if (isBuilderSetter(psiMethod) && !alreadyInClass(targetClass, psiMethod)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Nullable
     private PsiAnnotation findAutoValueAnnotationClass() {
         for (String autoValueAnnotationName : SUPPORTED_AUTOVALUE_LIBRARIES) {
@@ -255,4 +269,34 @@ public class AutoValueFactory {
         return parents;
     }
 
+    public boolean alreadyInBuilder(PsiClass builderClass, PsiMethod psiMethod) {
+        for (PsiMethod method : builderClass.getMethods()) {
+            if (isBuilderSetter(method) && method.getName().equals(psiMethod.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean alreadyInClass(PsiClass targetClass, PsiMethod psiMethod) {
+        for (PsiMethod method : targetClass.getMethods()) {
+            if (isAbstractGetter(method) && method.getName().equals(psiMethod.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAbstractGetter(PsiMethod psiMethod) {
+        boolean isAbstract = psiMethod.getModifierList().hasExplicitModifier("abstract");
+        boolean noParameters = psiMethod.getParameterList().getParametersCount() == 0;
+        boolean returnsSomething = !psiMethod.getReturnType().equals(PsiType.VOID);
+        boolean noBody = psiMethod.getBody() == null;
+        return isAbstract && noParameters && returnsSomething && noBody;
+    }
+
+    public boolean isBuilderSetter(PsiMethod psiMethod) {
+        String methodReturnName = psiMethod.getReturnType().getPresentableText();
+        return methodReturnName.equals("Builder");
+    }
 }

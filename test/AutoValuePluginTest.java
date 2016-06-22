@@ -1,5 +1,6 @@
-import com.afcastano.intellij.autovalue.actions.AddMissingMethodsToBuilderAction;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.afcastano.intellij.autovalue.actions.AddBuilderAction;
+import com.afcastano.intellij.autovalue.actions.UpdateBuilderAction;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 
@@ -16,7 +17,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.SHOULD_PERFORM_ACCESS_CHECK = false; // TODO: a workaround for v15
+//        VfsRootAccess.SHOULD_PERFORM_ACCESS_CHECK = false; // TODO: a workaround for v15
         super.setUp();
     }
 
@@ -27,7 +28,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testSimpleClass() {
 
-        runAddMissingMethodsTest("generatebuilder/basic/BasicTestFile.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/basic/BasicTestFile.java",
                 "generatebuilder/basic/BasicTestFile_expected.java",
                 AUTOVALUE);
 
@@ -35,7 +36,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNestedClasses() {
 
-        runAddMissingMethodsTest("generatebuilder/nested/NestedClasses.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/nested/NestedClasses.java",
                 "generatebuilder/nested/NestedClasses_expected.java",
                 AUTOVALUE);
 
@@ -43,7 +44,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNonJavaFile() {
 
-        runAddMissingMethodsTest("generatebuilder/nonJava/test.js",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/nonJava/test.js",
                 "generatebuilder/nonJava/test.js",
                 AUTOVALUE);
 
@@ -51,28 +52,34 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNotAnnotated() {
 
-        runAddMissingMethodsTest("generatebuilder/notannotated/NotAnnotated.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/notannotated/NotAnnotated.java",
                 "generatebuilder/notannotated/NotAnnotated.java",
                 AUTOVALUE);
 
     }
 
     public void testAddNewProperty() {
-        runAddMissingMethodsTest("generatebuilder/addnewproperty/Test.java",
+        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/addnewproperty/Test.java",
                 "generatebuilder/addnewproperty/Test_expected.java",
                 AUTOVALUE);
 
     }
 
     public void testAddBuilderFactory() {
-        runAddMissingMethodsTest("generatebuilder/addbuilderfactory/Test.java",
+        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/addbuilderfactory/Test.java",
                 "generatebuilder/addbuilderfactory/Test_expected.java",
                 AUTOVALUE);
 
     }
 
+    public void testRemoveProperty() {
+        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/removeproperty/Test.java",
+                "generatebuilder/removeproperty/Test_expected.java",
+                AUTOVALUE);
+    }
+
     public void testJavaBeanStyle() {
-        runAddMissingMethodsTest("generatebuilder/javabeanstyle/Test.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/javabeanstyle/Test.java",
                 "generatebuilder/javabeanstyle/Test_expected.java",
                 AUTOVALUE);
 
@@ -80,35 +87,34 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
 
     public void testBasicAutoParcel() {
-        runAddMissingMethodsTest("generatebuilder/basicautoparcel/Test.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/basicautoparcel/Test.java",
                 "generatebuilder/basicautoparcel/Test_expected.java",
                 AUTOPARCEL);
 
     }
 
     public void testBasicAutoParcelGson() {
-        runAddMissingMethodsTest("generatebuilder/basicautoparcelgson/Test.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/basicautoparcelgson/Test.java",
                 "generatebuilder/basicautoparcelgson/Test_expected.java",
                 AUTOPARCEL_GSON);
 
     }
 
     public void testGeneratedSourcesAlreadyExist() {
-        runAddMissingMethodsTest("generatebuilder/alreadyhasgeneratedsources/Test.java",
+        runIntentionAction(new AddBuilderAction(), "generatebuilder/alreadyhasgeneratedsources/Test.java",
                 "generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
                 "generatebuilder/alreadyhasgeneratedsources/AutoValue_BasicTestFile.java",
                 AUTOVALUE);
     }
 
-    private void runAddMissingMethodsTest(String inputFile, String expectedFile, String... extraFiles) {
+    private void runIntentionAction(IntentionAction action, String inputFile, String expectedFile, String... extraFiles) {
         List<String> files = new ArrayList<>();
         files.add(inputFile);
         files.addAll(Arrays.asList(extraFiles));
 
         myFixture.configureByFiles(files.toArray(new String[]{}));
-        myFixture.testAction(new AddMissingMethodsToBuilderAction());
+        myFixture.launchAction(action);
         myFixture.checkResultByFile(expectedFile, true);
     }
-
 
 }
