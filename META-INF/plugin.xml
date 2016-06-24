@@ -23,7 +23,14 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <intentionAction>
+            <className>com.afcastano.intellij.autovalue.actions.AddBuilderAction</className>
+            <category>Java/AutoValue</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.afcastano.intellij.autovalue.actions.UpdateBuilderAction</className>b
+            <category>Java/AutoValue</category>
+        </intentionAction>
     </extensions>
 
     <application-components>
@@ -31,24 +38,5 @@
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
     </project-components>
-
-    <actions>
-        <group id="com.afcastano.intellij.autovalue.editorgroup" text="AutoValue" popup="true">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-            <action id="com.afcastano.intellij.autovalue.AddMissingMethodsToBuilderAction" class="com.afcastano.intellij.autovalue.actions.AddMissingMethodsToBuilderAction"
-                    text="Add missing properties to builder"
-                    description="Generates the auto value builder from the abstract methods">
-                <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt B"/>
-            </action>
-            <action id="com.afcastano.intellij.autovalue.AddNewProperty"
-                    class="com.afcastano.intellij.autovalue.actions.AddNewPropertyAction" text="Add new property"
-                    description="Add new property to class">
-                <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt S"/>
-            </action>
-        </group>
-
-    </actions>
-
 </idea-plugin>

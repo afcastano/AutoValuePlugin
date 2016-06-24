@@ -1,0 +1,20 @@
+@AutoValue
+public abstract class Simple {
+
+    public abstract String name();
+
+    public abstract int age();
+
+    public static Builder builder() {
+        return new AutoValue_Simple.Builder();
+    }
+
+    @AutoValue.Builder
+    public interface Builder {
+        Builder String name(String name);
+
+        Builder int age(int age);
+
+        Simple build();
+    }
+}

@@ -1,0 +1,7 @@
+@AutoValue
+public abstract class Simple {
+
+    public abstract String name();
+
+    public abstract int age();
+}
