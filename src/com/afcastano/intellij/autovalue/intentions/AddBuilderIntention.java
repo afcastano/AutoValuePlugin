@@ -1,9 +1,10 @@
-package com.afcastano.intellij.autovalue.actions;
+package com.afcastano.intellij.autovalue.intentions;
 
+import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class AddBuilderAction extends BuilderAction {
+public class AddBuilderIntention extends BaseIntentionHandler {
 
     @Nls
     @NotNull

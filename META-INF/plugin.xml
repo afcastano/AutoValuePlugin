@@ -24,14 +24,23 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
-            <className>com.afcastano.intellij.autovalue.actions.AddBuilderAction</className>
+            <className>com.afcastano.intellij.autovalue.intentions.AddBuilderIntention</className>
             <category>Java/AutoValue</category>
         </intentionAction>
         <intentionAction>
-            <className>com.afcastano.intellij.autovalue.actions.UpdateBuilderAction</className>b
+            <className>com.afcastano.intellij.autovalue.intentions.UpdateBuilderIntention</className>b
             <category>Java/AutoValue</category>
         </intentionAction>
     </extensions>
+
+    <actions>
+        <action id="com.afcastano.intellij.autovalue.AddMissingMethodsToBuilderAction" class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueAction"
+                text="AutoValue builder"
+                description="Generates the auto value builder from the abstract methods">
+            <add-to-group group-id="GenerateGroup" anchor="first" />
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+    </actions>
 
     <application-components>
         <!-- Add your application components here -->

@@ -1,7 +1,5 @@
-package com.afcastano.intellij.autovalue.actions;
+package com.afcastano.intellij.autovalue.generator;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -212,7 +210,16 @@ public class AutoValueFactory {
                 return false;
             }
         }
+
+        if(!containsBuilderFactoryMethod(getTargetClass())) {
+            return false;
+        }
+
         return true;
+    }
+
+    private boolean containsBuilderFactoryMethod(PsiClass targetClass) {
+        return targetClass.findMethodsByName("builder", true).length != 0;
     }
 
     @Nullable

@@ -1,5 +1,5 @@
-import com.afcastano.intellij.autovalue.actions.AddBuilderAction;
-import com.afcastano.intellij.autovalue.actions.UpdateBuilderAction;
+import com.afcastano.intellij.autovalue.intentions.AddBuilderIntention;
+import com.afcastano.intellij.autovalue.intentions.UpdateBuilderIntention;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
@@ -28,7 +28,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testSimpleClass() {
 
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/basic/BasicTestFile.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basic/BasicTestFile.java",
                 "generatebuilder/basic/BasicTestFile_expected.java",
                 AUTOVALUE);
 
@@ -36,7 +36,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNestedClasses() {
 
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/nested/NestedClasses.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/nested/NestedClasses.java",
                 "generatebuilder/nested/NestedClasses_expected.java",
                 AUTOVALUE);
 
@@ -44,7 +44,7 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNonJavaFile() {
 
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/nonJava/test.js",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/nonJava/test.js",
                 "generatebuilder/nonJava/test.js",
                 AUTOVALUE);
 
@@ -52,34 +52,34 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     public void testNotAnnotated() {
 
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/notannotated/NotAnnotated.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/notannotated/NotAnnotated.java",
                 "generatebuilder/notannotated/NotAnnotated.java",
                 AUTOVALUE);
 
     }
 
     public void testAddNewProperty() {
-        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/addnewproperty/Test.java",
+        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/addnewproperty/Test.java",
                 "generatebuilder/addnewproperty/Test_expected.java",
                 AUTOVALUE);
 
     }
 
     public void testAddBuilderFactory() {
-        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/addbuilderfactory/Test.java",
+        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/addbuilderfactory/Test.java",
                 "generatebuilder/addbuilderfactory/Test_expected.java",
                 AUTOVALUE);
 
     }
 
     public void testRemoveProperty() {
-        runIntentionAction(new UpdateBuilderAction(), "generatebuilder/removeproperty/Test.java",
+        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/removeproperty/Test.java",
                 "generatebuilder/removeproperty/Test_expected.java",
                 AUTOVALUE);
     }
 
     public void testJavaBeanStyle() {
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/javabeanstyle/Test.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/javabeanstyle/Test.java",
                 "generatebuilder/javabeanstyle/Test_expected.java",
                 AUTOVALUE);
 
@@ -87,21 +87,21 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
 
     public void testBasicAutoParcel() {
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/basicautoparcel/Test.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basicautoparcel/Test.java",
                 "generatebuilder/basicautoparcel/Test_expected.java",
                 AUTOPARCEL);
 
     }
 
     public void testBasicAutoParcelGson() {
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/basicautoparcelgson/Test.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basicautoparcelgson/Test.java",
                 "generatebuilder/basicautoparcelgson/Test_expected.java",
                 AUTOPARCEL_GSON);
 
     }
 
     public void testGeneratedSourcesAlreadyExist() {
-        runIntentionAction(new AddBuilderAction(), "generatebuilder/alreadyhasgeneratedsources/Test.java",
+        runIntentionAction(new AddBuilderIntention(), "generatebuilder/alreadyhasgeneratedsources/Test.java",
                 "generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
                 "generatebuilder/alreadyhasgeneratedsources/AutoValue_BasicTestFile.java",
                 AUTOVALUE);
