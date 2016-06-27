@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO add more tests. Should test intentions and actions.
 public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     @NonNls
