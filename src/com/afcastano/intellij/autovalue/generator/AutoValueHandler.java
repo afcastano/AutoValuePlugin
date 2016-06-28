@@ -14,7 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenerateAutoValueHandler implements CodeInsightActionHandler, ContextAwareActionHandler {
+public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareActionHandler {
+
+    private ActionType type;
+
+    private AutoValueHandler(ActionType type) {
+        this.type = type;
+    }
 
     @Override
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
@@ -33,13 +39,40 @@ public class GenerateAutoValueHandler implements CodeInsightActionHandler, Conte
         return false;
     }
 
-    //TODO Create two actions: One to update builder, another to create builder.
     @Override
     public boolean isAvailableForQuickList(@NotNull Editor editor,
                                            @NotNull PsiFile file, @NotNull DataContext dataContext) {
         Project project = editor.getProject();
-        AutoValueFactory factory = new AutoValueFactory(project, editor, file);
-        return !factory.containsBuilderClass() || !factory.isBuilderUpToDate();
+
+        AutoValueFactory factory;
+        try {
+            factory = new AutoValueFactory(project, editor, file);
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+
+        return shouldHandle(factory);
+
+    }
+
+    public boolean shouldHandle(AutoValueFactory factory) {
+        switch (type) {
+            case GENERATE_BUILDER:
+                return shouldGenerateBuilder(factory);
+            case UPDATE_BUILDER:
+                return shouldUpdateBuilder(factory);
+            default:
+                return false;
+        }
+    }
+
+    private boolean shouldUpdateBuilder(AutoValueFactory factory) {
+        return factory.containsBuilderClass() && !factory.isBuilderUpToDate();
+    }
+
+    private boolean shouldGenerateBuilder(AutoValueFactory factory) {
+        return !factory.containsBuilderClass();
     }
 
     private void processClass(final AutoValueFactory factory) {
@@ -121,12 +154,24 @@ public class GenerateAutoValueHandler implements CodeInsightActionHandler, Conte
         return pendingBuilderMethods;
     }
 
-    //TODO Duplicated logic
+    //TODO Duplicated logic on factory
     private boolean containsBuilderFactoryMethod(PsiClass targetClass) {
         return targetClass.findMethodsByName("builder", true).length != 0;
     }
 
     private boolean containsBuildMethod(PsiClass builderClass) {
         return builderClass.findMethodsByName("build", true).length != 0;
+    }
+
+    private enum ActionType {
+        GENERATE_BUILDER, UPDATE_BUILDER
+    }
+
+    public static AutoValueHandler newGenerateBuilderHandler() {
+        return new AutoValueHandler(ActionType.GENERATE_BUILDER);
+    }
+
+    public static AutoValueHandler newUpdateBuilderHandler() {
+        return new AutoValueHandler(ActionType.UPDATE_BUILDER);
     }
 }

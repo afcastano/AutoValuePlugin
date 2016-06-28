@@ -34,13 +34,38 @@
     </extensions>
 
     <actions>
-        <action id="com.afcastano.intellij.autovalue.AddMissingMethodsToBuilderAction" class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueAction"
-                text="AutoValue builder"
+        <group id="com.afcastano.intellij.autovalue.editorgroup" text="AutoValue" popup="true">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <action id="com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction#EditorPopupMenu"
+                    class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction"
+                    text="Add AutoValue Builder"
+                    description="Generates the auto value builder from the abstract methods">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt B"/>
+            </action>
+            <action id="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderActionEditorPopupMenu"
+                    class="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
+                    text="Update AutoValue Builder"
+                    description="Updates the builder to match the existing properties">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt U"/>
+            </action>
+        </group>
+
+        <action id="com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction"
+                class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction"
+                text="Add AutoValue Builder"
                 description="Generates the auto value builder from the abstract methods">
             <add-to-group group-id="GenerateGroup" anchor="first" />
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+
+        <action id="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
+                class="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
+                text="Update AutoValue Builder"
+                description="Updates the builder to match the existing properties">
+            <add-to-group group-id="GenerateGroup" anchor="first" />
         </action>
     </actions>
+
+
 
     <application-components>
         <!-- Add your application components here -->

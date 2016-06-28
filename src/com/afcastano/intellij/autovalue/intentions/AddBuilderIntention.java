@@ -1,10 +1,15 @@
 package com.afcastano.intellij.autovalue.intentions;
 
 import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
+import com.afcastano.intellij.autovalue.generator.AutoValueHandler;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class AddBuilderIntention extends BaseIntentionHandler {
+
+    public AddBuilderIntention() {
+        super(AutoValueHandler.newGenerateBuilderHandler());
+    }
 
     @Nls
     @NotNull
@@ -13,8 +18,4 @@ public class AddBuilderIntention extends BaseIntentionHandler {
         return "Add AutoValue Builder";
     }
 
-    @Override
-    public boolean isAvailable(AutoValueFactory factory) {
-        return !factory.containsBuilderClass();
-    }
 }

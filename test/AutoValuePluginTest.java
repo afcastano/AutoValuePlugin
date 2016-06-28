@@ -1,14 +1,13 @@
+import com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction;
+import com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction;
 import com.afcastano.intellij.autovalue.intentions.AddBuilderIntention;
 import com.afcastano.intellij.autovalue.intentions.UpdateBuilderIntention;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.junit.Ignore;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-//TODO add more tests. Should test intentions and actions.
 public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     @NonNls
@@ -18,7 +17,6 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
 
     @Override
     protected void setUp() throws Exception {
-//        VfsRootAccess.SHOULD_PERFORM_ACCESS_CHECK = false; // TODO: a workaround for v15
         super.setUp();
     }
 
@@ -28,93 +26,133 @@ public class AutoValuePluginTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testSimpleClass() {
-
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basic/BasicTestFile.java",
-                "generatebuilder/basic/BasicTestFile_expected.java",
+        runGenerateBuilderActions("generatebuilder/basic/BasicTestFile_expected.java",
+                "generatebuilder/basic/BasicTestFile.java",
                 AUTOVALUE);
-
     }
 
     public void testNestedClasses() {
-
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/nested/NestedClasses.java",
-                "generatebuilder/nested/NestedClasses_expected.java",
+        runGenerateBuilderActions("generatebuilder/nested/NestedClasses_expected.java",
+                "generatebuilder/nested/NestedClasses.java",
                 AUTOVALUE);
-
     }
 
-    public void testNonJavaFile() {
-
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/nonJava/test.js",
+    public void testNonJavaFileGenerate() {
+        runGenerateBuilderActions("generatebuilder/nonJava/test.js",
                 "generatebuilder/nonJava/test.js",
                 AUTOVALUE);
-
     }
 
-    public void testNotAnnotated() {
+    public void testNonJavaFileUpdate() {
+        runUpdateBuilderActions("generatebuilder/nonJava/test.js",
+                "generatebuilder/nonJava/test.js",
+                AUTOVALUE);
+    }
 
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/notannotated/NotAnnotated.java",
+    public void testNotAnnotatedGenerate() {
+        runGenerateBuilderActions("generatebuilder/notannotated/NotAnnotated.java",
                 "generatebuilder/notannotated/NotAnnotated.java",
                 AUTOVALUE);
-
     }
 
+    public void testNotAnnotatedUpdate() {
+        runUpdateBuilderActions("generatebuilder/notannotated/NotAnnotated.java",
+                "generatebuilder/notannotated/NotAnnotated.java",
+                AUTOVALUE);
+    }
+
+    //TODO This is not implemented yet.
+//    public void testNonAbstractGenerate() {
+//        runGenerateBuilderActions("generatebuilder/notabstract/Test.java",
+//                "generatebuilder/notabstract/Test.java",
+//                AUTOVALUE);
+//    }
+//
+//    public void testNonAbstractUpdate() {
+//        runUpdateBuilderActions("generatebuilder/notabstract/Test.java",
+//                "generatebuilder/notabstract/Test.java",
+//                AUTOVALUE);
+//    }
+
     public void testAddNewProperty() {
-        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/addnewproperty/Test.java",
-                "generatebuilder/addnewproperty/Test_expected.java",
+        runUpdateBuilderActions("generatebuilder/addnewproperty/Test_expected.java",
+                "generatebuilder/addnewproperty/Test.java",
                 AUTOVALUE);
 
     }
 
     public void testAddBuilderFactory() {
-        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/addbuilderfactory/Test.java",
-                "generatebuilder/addbuilderfactory/Test_expected.java",
+        runUpdateBuilderActions("generatebuilder/addbuilderfactory/Test_expected.java",
+                "generatebuilder/addbuilderfactory/Test.java",
                 AUTOVALUE);
 
     }
 
     public void testRemoveProperty() {
-        runIntentionAction(new UpdateBuilderIntention(), "generatebuilder/removeproperty/Test.java",
-                "generatebuilder/removeproperty/Test_expected.java",
+        runUpdateBuilderActions("generatebuilder/removeproperty/Test_expected.java",
+                "generatebuilder/removeproperty/Test.java",
                 AUTOVALUE);
     }
 
     public void testJavaBeanStyle() {
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/javabeanstyle/Test.java",
-                "generatebuilder/javabeanstyle/Test_expected.java",
+        runGenerateBuilderActions("generatebuilder/javabeanstyle/Test_expected.java",
+                "generatebuilder/javabeanstyle/Test.java",
                 AUTOVALUE);
 
     }
 
 
     public void testBasicAutoParcel() {
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basicautoparcel/Test.java",
-                "generatebuilder/basicautoparcel/Test_expected.java",
+        runGenerateBuilderActions("generatebuilder/basicautoparcel/Test_expected.java",
+                "generatebuilder/basicautoparcel/Test.java",
                 AUTOPARCEL);
 
     }
 
     public void testBasicAutoParcelGson() {
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/basicautoparcelgson/Test.java",
-                "generatebuilder/basicautoparcelgson/Test_expected.java",
+        runGenerateBuilderActions("generatebuilder/basicautoparcelgson/Test_expected.java",
+                "generatebuilder/basicautoparcelgson/Test.java",
                 AUTOPARCEL_GSON);
 
     }
 
     public void testGeneratedSourcesAlreadyExist() {
-        runIntentionAction(new AddBuilderIntention(), "generatebuilder/alreadyhasgeneratedsources/Test.java",
-                "generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
+        runGenerateBuilderActions("generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
+                "generatebuilder/alreadyhasgeneratedsources/Test.java",
                 "generatebuilder/alreadyhasgeneratedsources/AutoValue_BasicTestFile.java",
                 AUTOVALUE);
     }
 
-    private void runIntentionAction(IntentionAction action, String inputFile, String expectedFile, String... extraFiles) {
-        List<String> files = new ArrayList<>();
-        files.add(inputFile);
-        files.addAll(Arrays.asList(extraFiles));
 
-        myFixture.configureByFiles(files.toArray(new String[]{}));
+    /**
+     * Tests the AddBuilderIntention and GenerateAutoValueAction with the files provided.
+     */
+    private void runGenerateBuilderActions(String expectedFile, String... filesToLoad) {
+        configureSourceFiles(filesToLoad);
+        runIntention(new AddBuilderIntention(), expectedFile);
+        runAction(new GenerateAutoValueBuilderAction(), expectedFile);
+    }
+
+    /**
+     * Tests the UpdateBuilderIntention and UpdateAutoValueBuilderAction with the files provided.
+     */
+    private void runUpdateBuilderActions(String expectedFile, String... filesToLoad) {
+        configureSourceFiles(filesToLoad);
+        runIntention(new UpdateBuilderIntention(), expectedFile);
+        runAction(new UpdateAutoValueBuilderAction(), expectedFile);
+    }
+
+    private void configureSourceFiles(String... files) {
+        myFixture.configureByFiles(files);
+    }
+
+    private void runIntention(IntentionAction action, String expectedFile) {
         myFixture.launchAction(action);
+        myFixture.checkResultByFile(expectedFile, true);
+    }
+
+    private void runAction(AnAction action, String expectedFile) {
+        myFixture.testAction(action);
         myFixture.checkResultByFile(expectedFile, true);
     }
 
