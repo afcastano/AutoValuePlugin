@@ -17,9 +17,13 @@ Functionality:
 - Adds an @AutoValue.Builder static class inside the target @AutoValue class.
 - Searches for all abstract getters on the target class and transforms it into builder methods in the builder.
 - Creates a static builder method that returns the @AutoValue.Builder instance.
-- If the builder exists, it will add the missing properties to it.
+- If the builder exists, it will either add the missing properties to it or remove the ones that are not needed any more.
 - It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson). Thanks to [@vjames19](https://github.com/vjames19)!
 
+How to use:
+
+The plugin adds new context menu actions, generate menu actions and code intentions. Just trigger the action inside a
+class annotated with @AutoValue.
 
 Here is a short tutorial video (1:50 mins):
 https://www.youtube.com/watch?v=8_HbI9RwiGw

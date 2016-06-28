@@ -1,3 +1,7 @@
+Release 20160628
+-------
+* 2016-06-28: Added code intentions and generate menu actions. Actions are now enabled depending if you need to add a builder or update`` an existing one.
+
 Release 20160222
 --------
 * 2016-02-22: Added support for javabeans style getters and setters.
