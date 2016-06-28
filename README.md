@@ -22,7 +22,7 @@ Functionality:
 
 How to use:
 
-The plugin adds new context menu actions, [code generation actions](https://www.jetbrains.com/help/idea/2016.1/generating-code.html) and [intention actions](https://www.jetbrains.com/help/idea/2016.1/intention-actions.html). The easiest way to use the plugin is to right-click inside a class annotated with [@AutoValue](https://github.com/google/auto).
+The plugin adds new context menu actions, [code generation actions](https://www.jetbrains.com/help/idea/2016.1/generating-code.html) and [intention actions](https://www.jetbrains.com/help/idea/2016.1/intention-actions.html). The easiest way to use the plugin is to right-click inside a class annotated with [@AutoValue](https://github.com/google/auto) and choose any of the generation options that appears first on the list.
 
 There are also other ways of using the plugin. Here is a short tutorial video (1:50 mins):
 https://www.youtube.com/watch?v=8_HbI9RwiGw
