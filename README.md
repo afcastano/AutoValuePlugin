@@ -12,7 +12,7 @@ ___
 AutoValue is awesome.
 I can't explain it better than [that](https://github.com/google/auto/blob/master/value/userguide/index.md), or [that](https://docs.google.com/presentation/d/14u_h-lMn7f1rXE1nDiLX0azS3IkgjGl5uxp5jGJ75RE/edit#slide=id.g2a5e9c4a8_00).
 
-Functionality:
+### Functionality:
 
 - Adds an @AutoValue.Builder static class inside the target @AutoValue class.
 - Searches for all abstract getters on the target class and transforms it into builder methods in the builder.
