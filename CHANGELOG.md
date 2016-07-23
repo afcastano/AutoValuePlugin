@@ -1,6 +1,10 @@
+Release 20160723
+-------
+* 2016-07-23: Added functionality to optionally generate the create method using the builder. If you generate the new option, both the builder and the create method will be generated.
+
 Release 20160628
 -------
-* 2016-06-28: Added code intentions and generate menu actions. Actions are now enabled depending if you need to add a builder or update`` an existing one.
+* 2016-06-28: Added code intentions and generate menu actions. Actions are now enabled depending if you need to add a builder or update an existing one.
 
 Release 20160222
 --------
