@@ -1,0 +1,12 @@
+@AutoValue
+public abstract class Simple {
+
+    public abstract String name();
+
+    public abstract int age();
+
+    public static Simple create(String name, int age) {
+        return new AutoValue_Simple(name, age);
+    }
+
+}

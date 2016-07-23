@@ -1,13 +1,12 @@
 package com.afcastano.intellij.autovalue.intentions;
 
-import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
 import com.afcastano.intellij.autovalue.generator.AutoValueHandler;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class UpdateBuilderIntention extends BaseIntentionHandler {
+public class UpdateGeneratedMethodsIntention extends BaseIntentionHandler {
 
-    public UpdateBuilderIntention() {
+    public UpdateGeneratedMethodsIntention() {
         super(AutoValueHandler.newUpdateBuilderHandler());
     }
 
@@ -15,7 +14,7 @@ public class UpdateBuilderIntention extends BaseIntentionHandler {
     @NotNull
     @Override
     public String getText() {
-        return "Update AutoValue Builder";
+        return "Update AutoValue generated methods";
     }
 
 }

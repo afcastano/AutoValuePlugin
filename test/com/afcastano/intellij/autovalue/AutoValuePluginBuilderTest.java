@@ -1,0 +1,122 @@
+package com.afcastano.intellij.autovalue;
+
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+
+import static com.afcastano.intellij.autovalue.AutoValuePluginTestUtils.AUTOPARCEL;
+import static com.afcastano.intellij.autovalue.AutoValuePluginTestUtils.AUTOPARCEL_GSON;
+import static com.afcastano.intellij.autovalue.AutoValuePluginTestUtils.AUTOVALUE;
+
+public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase {
+
+    private AutoValuePluginTestUtils utils;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        utils = new AutoValuePluginTestUtils(myFixture);
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return "testData";
+    }
+
+    public void testSimpleClass() {
+        utils.runGenerateBuilderActions("generatebuilder/basic/BasicTestFile_expected.java",
+                "generatebuilder/basic/BasicTestFile.java",
+                AUTOVALUE);
+    }
+
+    public void testNestedClasses() {
+        utils.runGenerateBuilderActions("generatebuilder/nested/NestedClasses_expected.java",
+                "generatebuilder/nested/NestedClasses.java",
+                AUTOVALUE);
+    }
+
+    public void testNonJavaFileGenerate() {
+        utils.runGenerateBuilderActions("generatebuilder/nonJava/test.js",
+                "generatebuilder/nonJava/test.js",
+                AUTOVALUE);
+    }
+
+    public void testNonJavaFileUpdate() {
+        utils.runUpdateMethodsActions("generatebuilder/nonJava/test.js",
+                "generatebuilder/nonJava/test.js",
+                AUTOVALUE);
+    }
+
+    public void testNotAnnotatedGenerate() {
+        utils.runGenerateBuilderActions("generatebuilder/notannotated/NotAnnotated.java",
+                "generatebuilder/notannotated/NotAnnotated.java",
+                AUTOVALUE);
+    }
+
+    public void testNotAnnotatedUpdate() {
+        utils.runUpdateMethodsActions("generatebuilder/notannotated/NotAnnotated.java",
+                "generatebuilder/notannotated/NotAnnotated.java",
+                AUTOVALUE);
+    }
+
+    //TODO This is not implemented yet.
+//    public void testNonAbstractGenerate() {
+//        utils.runGenerateBuilderActions("generatebuilder/notabstract/Test.java",
+//                "generatebuilder/notabstract/Test.java",
+//                AUTOVALUE);
+//    }
+//
+//    public void testNonAbstractUpdate() {
+//        utils.runUpdateMethodsActions("generatebuilder/notabstract/Test.java",
+//                "generatebuilder/notabstract/Test.java",
+//                AUTOVALUE);
+//    }
+
+    public void testAddNewProperty() {
+        utils.runUpdateMethodsActions("generatebuilder/addnewproperty/Test_expected.java",
+                "generatebuilder/addnewproperty/Test.java",
+                AUTOVALUE);
+
+    }
+
+    public void testAddBuilderFactory() {
+        utils.runUpdateMethodsActions("generatebuilder/addbuilderfactory/Test_expected.java",
+                "generatebuilder/addbuilderfactory/Test.java",
+                AUTOVALUE);
+
+    }
+
+    public void testRemoveProperty() {
+        utils.runUpdateMethodsActions("generatebuilder/removeproperty/Test_expected.java",
+                "generatebuilder/removeproperty/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testJavaBeanStyle() {
+        utils.runGenerateBuilderActions("generatebuilder/javabeanstyle/Test_expected.java",
+                "generatebuilder/javabeanstyle/Test.java",
+                AUTOVALUE);
+
+    }
+
+
+    public void testBasicAutoParcel() {
+        utils.runGenerateBuilderActions("generatebuilder/basicautoparcel/Test_expected.java",
+                "generatebuilder/basicautoparcel/Test.java",
+                AUTOPARCEL);
+
+    }
+
+    public void testBasicAutoParcelGson() {
+        utils.runGenerateBuilderActions("generatebuilder/basicautoparcelgson/Test_expected.java",
+                "generatebuilder/basicautoparcelgson/Test.java",
+                AUTOPARCEL_GSON);
+
+    }
+
+    public void testGeneratedSourcesAlreadyExist() {
+        utils.runGenerateBuilderActions("generatebuilder/alreadyhasgeneratedsources/Test_expected.java",
+                "generatebuilder/alreadyhasgeneratedsources/Test.java",
+                "generatebuilder/alreadyhasgeneratedsources/AutoValue_BasicTestFile.java",
+                AUTOVALUE);
+    }
+
+}

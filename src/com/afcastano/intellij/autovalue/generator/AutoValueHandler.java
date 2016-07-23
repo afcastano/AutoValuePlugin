@@ -60,15 +60,23 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         switch (type) {
             case GENERATE_BUILDER:
                 return shouldGenerateBuilder(factory);
-            case UPDATE_BUILDER:
-                return shouldUpdateBuilder(factory);
+            case UPDATE_GENERATED_METHODS:
+                return shouldUpdateMethods(factory);
+            case GENERATE_CREATE_METHOD:
+                return shouldGenerateCreateMethod(factory);
             default:
                 return false;
         }
     }
 
-    private boolean shouldUpdateBuilder(AutoValueFactory factory) {
-        return factory.containsBuilderClass() && !factory.isBuilderUpToDate();
+    private boolean shouldGenerateCreateMethod(AutoValueFactory factory) {
+        return !factory.containsCreateMethod();
+    }
+
+    private boolean shouldUpdateMethods(AutoValueFactory factory) {
+        boolean builderNotUpToDate = factory.containsBuilderClass() && !factory.isBuilderUpToDate();
+        boolean createMethodNotUpToDate = factory.containsCreateMethod() && !factory.isCreateMethodUpToDate();
+        return builderNotUpToDate || createMethodNotUpToDate;
     }
 
     private boolean shouldGenerateBuilder(AutoValueFactory factory) {
@@ -85,15 +93,16 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
         final List<PsiMethod> pendingAddBuilderMethods = generateMissingMethods(factory, targetClass, builderClass);
         final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(factory, targetClass, builderClass);
+        final PsiMethod createMethodWithBuilder = generateCreateMethodWithBuilder(factory, targetClass);
 
         final PsiMethod builderFactoryMethod = factory.newBuilderFactoryMethod();
 
-        final PsiMethod lastMethod = targetClass.getMethods()[targetClass.getMethods().length - 1];
+        final boolean containsCreateMethod = containsCreateMethod(targetClass);
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-
+                final PsiMethod lastMethod = targetClass.getMethods()[targetClass.getMethods().length - 1];
                 boolean containsBuildMethod = containsBuildMethod(builderClass);
 
                 for (PsiMethod method : pendingAddBuilderMethods) {
@@ -124,10 +133,68 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                     targetClass.addAfter(builderFactoryMethod, lastMethod);
                 }
 
+                if(containsCreateMethod) {
+                    targetClass.findMethodsByName("create", true)[0].delete();
+                }
+
             }
         };
 
         WriteCommandAction.runWriteCommandAction(project, runnable);
+
+        Runnable updateCreateMethod = new Runnable() {
+            @Override
+            public void run() {
+                List<PsiMethod> allGetters = getAllGetters(factory, targetClass);
+                PsiMethod lastMethod = allGetters.get(allGetters.size() - 1);
+                if (type == ActionType.GENERATE_CREATE_METHOD) {
+                    //If the action is generate method, add it anyway.
+                    targetClass.addAfter(createMethodWithBuilder, lastMethod);
+
+                }
+
+                if (type == ActionType.UPDATE_GENERATED_METHODS) {
+                    //Update only if create method exist
+                    if (containsCreateMethod) {
+                        targetClass.addAfter(createMethodWithBuilder, lastMethod);
+                    }
+
+                }
+            }
+        };
+
+        WriteCommandAction.runWriteCommandAction(project, updateCreateMethod);
+    }
+
+    private PsiMethod generateCreateMethodWithBuilder(AutoValueFactory factory, PsiClass targetClass) {
+        final List<PsiMethod> abstractGetters = getAbstractGetters(factory, targetClass);
+        return factory.newCreateMethodWithBuilder(abstractGetters);
+    }
+
+    private PsiMethod generateCreateMethodWhenNoBuilder(AutoValueFactory factory, PsiClass targetClass) {
+        final List<PsiMethod> abstractGetters = getAbstractGetters(factory, targetClass);
+        return factory.newCreateMethodWhenNoBuilder(abstractGetters);
+    }
+
+    @NotNull
+    private List<PsiMethod> getAbstractGetters(AutoValueFactory factory, PsiClass targetClass) {
+        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        for (PsiMethod psiMethod : targetClass.getMethods()) {
+            if (factory.isAbstractGetter(psiMethod)) {
+                abstractGetters.add(psiMethod);
+            }
+        }
+        return abstractGetters;
+    }
+
+    private List<PsiMethod> getAllGetters(AutoValueFactory factory, PsiClass targetClass) {
+        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        for (PsiMethod psiMethod : targetClass.getMethods()) {
+            if (factory.isGetter(psiMethod)) {
+                abstractGetters.add(psiMethod);
+            }
+        }
+        return abstractGetters;
     }
 
     @NotNull
@@ -163,8 +230,12 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         return builderClass.findMethodsByName("build", true).length != 0;
     }
 
+    private boolean containsCreateMethod(PsiClass targetClass) {
+        return targetClass.findMethodsByName("create", true).length != 0;
+    }
+
     private enum ActionType {
-        GENERATE_BUILDER, UPDATE_BUILDER
+        GENERATE_BUILDER, GENERATE_CREATE_METHOD, UPDATE_GENERATED_METHODS
     }
 
     public static AutoValueHandler newGenerateBuilderHandler() {
@@ -172,6 +243,10 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     }
 
     public static AutoValueHandler newUpdateBuilderHandler() {
-        return new AutoValueHandler(ActionType.UPDATE_BUILDER);
+        return new AutoValueHandler(ActionType.UPDATE_GENERATED_METHODS);
+    }
+
+    public static AutoValueHandler newGenerateCreateMethodHandler() {
+        return new AutoValueHandler(ActionType.GENERATE_CREATE_METHOD);
     }
 }

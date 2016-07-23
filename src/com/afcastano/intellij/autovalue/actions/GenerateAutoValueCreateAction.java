@@ -4,10 +4,10 @@ import com.afcastano.intellij.autovalue.generator.AutoValueHandler;
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
 
 //TODO eventually remove the right click action.
-public class UpdateAutoValueBuilderAction extends BaseGenerateAction {
+public class GenerateAutoValueCreateAction extends BaseGenerateAction {
 
-    public UpdateAutoValueBuilderAction() {
-        super(AutoValueHandler.newUpdateBuilderHandler());
+    public GenerateAutoValueCreateAction() {
+        super(AutoValueHandler.newGenerateCreateMethodHandler());
     }
 
 }

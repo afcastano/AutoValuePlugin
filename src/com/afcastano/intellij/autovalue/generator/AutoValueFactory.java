@@ -20,6 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ImmutableList;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -116,24 +117,80 @@ public class AutoValueFactory {
         return builderClass;
     }
 
-    public PsiMethod newBuilderSetter(PsiMethod getterMethod) {
-        String name = getterMethod.getName();
-        String parameterName = name;
+    public PsiMethod newCreateMethodWithBuilder(List<PsiMethod> abstractGetters) {
+        final PsiMethod method = factory.createMethod("create", getTargetType());
+        method.getModifierList().setModifierProperty("public", true);
+        method.getModifierList().setModifierProperty("static", true);
 
-        if (name.startsWith("get") && name.length() > 3) {
-            if (Character.isUpperCase(name.charAt(3))) {
-                name = name.replaceFirst("get", "set");
-                parameterName = name.replaceFirst("set", "new");
-            }
-        } else if (name.startsWith("is") && name.length() > 2) {
-            if (Character.isUpperCase(name.charAt(2))) {
-                name = name.replaceFirst("is", "set");
-                parameterName = name.replaceFirst("set", "new");
-            }
+        ArrayList<GetterProperties> properties = new ArrayList<>();
+
+        for (PsiMethod getter: abstractGetters) {
+            GetterProperties propertyNames = GetterProperties.fromGetter(getter);
+            PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
+                    getter.getReturnType());
+
+            method.getParameterList().add(parameter);
+            properties.add(propertyNames);
+
         }
-        final PsiMethod method = factory.createMethod(name, getBuilderType());
 
-        PsiParameter parameter = factory.createParameter(parameterName, getterMethod.getReturnType());
+        String builderChain = "";
+
+        for (GetterProperties property: properties) {
+            builderChain = builderChain + "." + property.setterName + "("+property.setterParameterName+")\n";
+        }
+
+        String returnStatementText = "return builder()\n"+builderChain+".build();";
+
+        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
+
+        method.getBody().add(returnStatement);
+        return method;
+    }
+
+
+    public PsiMethod newCreateMethodWhenNoBuilder(List<PsiMethod> abstractGetters) {
+        final PsiMethod method = factory.createMethod("create", getTargetType());
+        method.getModifierList().setModifierProperty("public", true);
+        method.getModifierList().setModifierProperty("static", true);
+
+        ArrayList<String> paramNames = new ArrayList<>();
+
+        for (PsiMethod getter: abstractGetters) {
+            GetterProperties propertyNames = GetterProperties.fromGetter(getter);
+            PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
+                    getter.getReturnType());
+
+            method.getParameterList().add(parameter);
+            paramNames.add(propertyNames.setterParameterName);
+
+        }
+
+        String paramList = "";
+
+        for (String paramName: paramNames) {
+            paramList = paramList + paramName + ", ";
+        }
+
+        if (!paramList.equals("")) {
+            paramList = paramList.substring(0, paramList.length() - 2);
+        }
+
+        String returnStatementText = "return new " + getAutoValueClassName() + "(" + paramList + ");";
+
+        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
+
+        method.getBody().add(returnStatement);
+        return method;
+    }
+
+    public PsiMethod newBuilderSetter(PsiMethod getterMethod) {
+        GetterProperties propertyNames = GetterProperties.fromGetter(getterMethod);
+
+        final PsiMethod method = factory.createMethod(propertyNames.setterName, getBuilderType());
+        PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
+                getterMethod.getReturnType());
+
         method.getParameterList().add(parameter);
         method.getBody().delete();
         method.getModifierList().setModifierProperty("public", true);
@@ -165,6 +222,17 @@ public class AutoValueFactory {
         builderMethod.getModifierList().setModifierProperty("public", true);
         builderMethod.getModifierList().setModifierProperty("static", true);
 
+        String autoValueClassName = getAutoValueClassName();
+        String returnStatementText = "return new " + autoValueClassName + ".Builder();";
+
+        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
+
+        builderMethod.getBody().add(returnStatement);
+        return builderMethod;
+    }
+
+    @NotNull
+    private String getAutoValueClassName() {
         String generatedName = "";
 
         for(PsiClass parent: findAllParents(getTargetClass())) {
@@ -174,12 +242,7 @@ public class AutoValueFactory {
         generatedName = generatedName + getTargetClass().getName();
 
         String autoValueAnnotationName = StringUtil.getShortName(autoValueAnnotation.getQualifiedName());
-        String returnStatementText = "return new " + autoValueAnnotationName + "_" + generatedName + ".Builder();";
-
-        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
-
-        builderMethod.getBody().add(returnStatement);
-        return builderMethod;
+        return autoValueAnnotationName + "_" + generatedName;
     }
 
     public PsiType getBuilderType() {
@@ -193,6 +256,39 @@ public class AutoValueFactory {
 
     public boolean containsBuilderClass() {
         return findExistingBuilderClass(getTargetClass()) != null;
+    }
+
+    public boolean isCreateMethodUpToDate() {
+        //If the class does not contain a create method, then it is assumed up to date.
+        if(!containsCreateMethod()) {
+            return true;
+        }
+
+        //At this point there should be a create method in the class
+        PsiMethod createMethod = targetClass.findMethodsByName("create", true)[0];
+        PsiParameter[] parameters = createMethod.getParameterList().getParameters();
+
+        // We compare base on names. A more precise comparison could be using the parameter types.
+        List<String> parameterNames = new ArrayList<>();
+
+        for(PsiParameter parameter: parameters) {
+            parameterNames.add(parameter.getName());
+        }
+
+        for (PsiMethod psiMethod : targetClass.getMethods()) {
+            if(!isAbstractGetter(psiMethod)) {
+                continue;
+            }
+
+            GetterProperties prop = GetterProperties.fromGetter(psiMethod);
+
+            if (!parameterNames.contains(prop.setterParameterName)) {
+                return false;
+            }
+        }
+
+        // TODO: Comparing from parameters to class methods is missing. Need to compare return types with param types.
+        return true;
     }
 
     public boolean isBuilderUpToDate() {
@@ -217,7 +313,6 @@ public class AutoValueFactory {
 
         return true;
     }
-
     private boolean containsBuilderFactoryMethod(PsiClass targetClass) {
         return targetClass.findMethodsByName("builder", true).length != 0;
     }
@@ -302,8 +397,50 @@ public class AutoValueFactory {
         return isAbstract && noParameters && returnsSomething && noBody;
     }
 
+    public boolean isGetter(PsiMethod psiMethod) {
+        boolean noParameters = psiMethod.getParameterList().getParametersCount() == 0;
+        boolean returnsSomething = !psiMethod.getReturnType().equals(PsiType.VOID);
+        boolean isStatic = psiMethod.getModifierList().hasExplicitModifier("static");
+        return noParameters && returnsSomething && !isStatic;
+    }
+
     public boolean isBuilderSetter(PsiMethod psiMethod) {
         String methodReturnName = psiMethod.getReturnType().getPresentableText();
         return methodReturnName.equals("Builder");
+    }
+
+    public boolean containsCreateMethod() {
+        return targetClass.findMethodsByName("create", true).length != 0;
+    }
+
+    private static class GetterProperties {
+        private String methodName;
+        private String setterName;
+        private String setterParameterName;
+
+        private GetterProperties(PsiMethod getter) {
+            this.methodName = getter.getName();
+            this.setterName = this.methodName;
+            this.setterParameterName = this.setterName;
+
+            if (this.methodName.startsWith("get") && this.methodName.length() > 3) {
+                if (Character.isUpperCase(this.methodName.charAt(3))) {
+                    this.setterName = this.methodName.replaceFirst("get", "set");
+                    this.setterParameterName = this.setterName.replaceFirst("set", "new");
+                }
+
+            } else if (this.methodName.startsWith("is") && this.methodName.length() > 2) {
+                if (Character.isUpperCase(this.methodName.charAt(2))) {
+                    this.setterName = this.methodName.replaceFirst("is", "set");
+                    this.setterParameterName = this.setterName.replaceFirst("set", "new");
+                }
+            }
+
+        }
+
+        public static GetterProperties fromGetter(PsiMethod getter) {
+            return new GetterProperties(getter);
+        }
+
     }
 }

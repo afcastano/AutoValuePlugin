@@ -29,7 +29,11 @@
             <category>Java/AutoValue</category>
         </intentionAction>
         <intentionAction>
-            <className>com.afcastano.intellij.autovalue.intentions.UpdateBuilderIntention</className>b
+            <className>com.afcastano.intellij.autovalue.intentions.AddCreateMethodIntention</className>b
+            <category>Java/AutoValue</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.afcastano.intellij.autovalue.intentions.UpdateGeneratedMethodsIntention</className>b
             <category>Java/AutoValue</category>
         </intentionAction>
     </extensions>
@@ -43,9 +47,14 @@
                     description="Generates the auto value builder from the abstract methods">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt B"/>
             </action>
+            <action id="com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction#EditorPopupMenu"
+                    class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction"
+                    text="Add AutoValue create method"
+                    description="Generates the auto value create from the abstract methods">
+            </action>
             <action id="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderActionEditorPopupMenu"
-                    class="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
-                    text="Update AutoValue Builder"
+                    class="com.afcastano.intellij.autovalue.actions.UpdateGeneratedMethodsAction"
+                    text="Update AutoValue generated methods"
                     description="Updates the builder to match the existing properties">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta alt U"/>
             </action>
@@ -58,9 +67,16 @@
             <add-to-group group-id="GenerateGroup" anchor="first" />
         </action>
 
-        <action id="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
-                class="com.afcastano.intellij.autovalue.actions.UpdateAutoValueBuilderAction"
-                text="Update AutoValue Builder"
+        <action id="com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction"
+                class="com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction"
+                text="Add AutoValue create method"
+                description="Generates the auto value create from the abstract methods">
+            <add-to-group group-id="GenerateGroup" anchor="first" />
+        </action>
+
+        <action id="com.afcastano.intellij.autovalue.actions.UpdateGeneratedMethodsAction"
+                class="com.afcastano.intellij.autovalue.actions.UpdateGeneratedMethodsAction"
+                text="Update AutoValue generated methods"
                 description="Updates the builder to match the existing properties">
             <add-to-group group-id="GenerateGroup" anchor="first" />
         </action>
