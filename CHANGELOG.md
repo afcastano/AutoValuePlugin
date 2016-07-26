@@ -1,3 +1,7 @@
+Release 20160726
+-------
+* 2016-07-26: Fixed bug [#13](https://github.com/afcastano/AutoValuePlugin/issues/13)
+
 Release 20160723
 -------
 * 2016-07-23: Added functionality to optionally generate the create method using the builder. If you generate the new option, both the builder and the create method will be generated.
