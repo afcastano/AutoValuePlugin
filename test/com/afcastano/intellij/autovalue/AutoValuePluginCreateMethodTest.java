@@ -78,4 +78,16 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGenerateOkWhenNoMethod() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/nomethods/Test_expected.java",
+                "generatecreatemethod/nomethods/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testUpdateOkWhenNoMethod() {
+        utils.runUpdateMethodsActions("generatecreatemethod/nomethods/Test.java",
+                "generatecreatemethod/nomethods/Test.java",
+                AUTOVALUE);
+    }
+
 }

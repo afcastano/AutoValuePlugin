@@ -57,6 +57,18 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
                 AUTOVALUE);
     }
 
+    public void testNoMethodsGenerate() {
+        utils.runGenerateBuilderActions("generatebuilder/nomethods/Test_expected.java",
+                "generatebuilder/nomethods/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testNoMethodsUpdate() {
+        utils.runUpdateMethodsActions("generatebuilder/nomethods/Test.java",
+                "generatebuilder/nomethods/Test.java",
+                AUTOVALUE);
+    }
+
     //TODO This is not implemented yet.
 //    public void testNonAbstractGenerate() {
 //        utils.runGenerateBuilderActions("generatebuilder/notabstract/Test.java",

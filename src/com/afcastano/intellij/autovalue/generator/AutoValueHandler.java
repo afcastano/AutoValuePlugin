@@ -99,10 +99,16 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
         final boolean containsCreateMethod = containsCreateMethod(targetClass);
 
+        PsiMethod[] targetClassMethods = targetClass.getMethods();
+        final PsiMethod lastMethod = targetClassMethods.length > 0
+                ? targetClassMethods[targetClassMethods.length - 1]
+                : null;
+
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final PsiMethod lastMethod = targetClass.getMethods()[targetClass.getMethods().length - 1];
+
+
                 boolean containsBuildMethod = containsBuildMethod(builderClass);
 
                 for (PsiMethod method : pendingAddBuilderMethods) {
@@ -130,7 +136,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                 }
 
                 if (!containsBuilderFactoryMethod(targetClass)) {
-                    targetClass.addAfter(builderFactoryMethod, lastMethod);
+                    addAfterSafe(targetClass, builderFactoryMethod, lastMethod);
                 }
 
                 if(containsCreateMethod) {
@@ -146,17 +152,15 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             @Override
             public void run() {
                 List<PsiMethod> allGetters = getAllGetters(factory, targetClass);
-                PsiMethod lastMethod = allGetters.get(allGetters.size() - 1);
+                PsiMethod lastMethod = allGetters.size() > 0 ? allGetters.get(allGetters.size() - 1) : null;
                 if (type == ActionType.GENERATE_CREATE_METHOD) {
-                    //If the action is generate method, add it anyway.
-                    targetClass.addAfter(createMethodWithBuilder, lastMethod);
-
+                    addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
                 }
 
                 if (type == ActionType.UPDATE_GENERATED_METHODS) {
                     //Update only if create method exist
                     if (containsCreateMethod) {
-                        targetClass.addAfter(createMethodWithBuilder, lastMethod);
+                        addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
                     }
 
                 }
@@ -232,6 +236,18 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
     private boolean containsCreateMethod(PsiClass targetClass) {
         return targetClass.findMethodsByName("create", true).length != 0;
+    }
+
+    private void addAfterSafe(PsiClass targetClass, PsiMethod toAdd, PsiMethod anchor ) {
+        if(anchor != null) {
+            //If the action is generate method, add it anyway.
+            targetClass.addAfter(toAdd, anchor);
+
+        } else {
+            //If the action is generate method, add it anyway.
+            targetClass.add(toAdd);
+
+        }
     }
 
     private enum ActionType {
