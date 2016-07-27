@@ -3,8 +3,10 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class BasicTestFile {
 
-
+    <caret>
     public abstract String value();
+
+    public abstract bool newProp();
 
     public abstract int another();
 

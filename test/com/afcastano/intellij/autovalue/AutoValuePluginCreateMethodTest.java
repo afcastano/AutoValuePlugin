@@ -90,4 +90,10 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testUpdateCreateMethodOnly() {
+        utils.runUpdateMethodsActions("generatecreatemethod/updateCreateMethodOnly/Test_expected.java",
+                "generatecreatemethod/updateCreateMethodOnly/Test.java",
+                AUTOVALUE);
+    }
+
 }

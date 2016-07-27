@@ -93,7 +93,6 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
         final List<PsiMethod> pendingAddBuilderMethods = generateMissingMethods(factory, targetClass, builderClass);
         final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(factory, targetClass, builderClass);
-        final PsiMethod createMethodWithBuilder = generateCreateMethodWithBuilder(factory, targetClass);
 
         final PsiMethod builderFactoryMethod = factory.newBuilderFactoryMethod();
 
@@ -108,7 +107,26 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             @Override
             public void run() {
 
+                if (type == ActionType.GENERATE_BUILDER) {
 
+                    generateBuilder();
+
+                }
+
+                if (type == ActionType.UPDATE_GENERATED_METHODS) {
+                    if(containsBuilderFactoryMethod(targetClass) || factory.containsBuilderClass()) {
+                        generateBuilder();
+                    }
+                }
+
+                if(containsCreateMethod) {
+                    targetClass.findMethodsByName("create", true)[0].delete();
+                }
+
+
+            }
+
+            private void generateBuilder() {
                 boolean containsBuildMethod = containsBuildMethod(builderClass);
 
                 for (PsiMethod method : pendingAddBuilderMethods) {
@@ -138,11 +156,6 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                 if (!containsBuilderFactoryMethod(targetClass)) {
                     addAfterSafe(targetClass, builderFactoryMethod, lastMethod);
                 }
-
-                if(containsCreateMethod) {
-                    targetClass.findMethodsByName("create", true)[0].delete();
-                }
-
             }
         };
 
@@ -151,16 +164,28 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         Runnable updateCreateMethod = new Runnable() {
             @Override
             public void run() {
+                final PsiMethod createMethod;
+
+                boolean containsBuilder = factory.containsBuilderClass();
+
+                if (containsBuilder) {
+                    createMethod = generateCreateMethodWithBuilder(factory, targetClass);
+
+                } else {
+                    createMethod = generateCreateMethodWhenNoBuilder(factory, targetClass);
+
+                }
+
                 List<PsiMethod> allGetters = getAllGetters(factory, targetClass);
                 PsiMethod lastMethod = allGetters.size() > 0 ? allGetters.get(allGetters.size() - 1) : null;
                 if (type == ActionType.GENERATE_CREATE_METHOD) {
-                    addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
+                    addAfterSafe(targetClass, createMethod, lastMethod);
                 }
 
-                if (type == ActionType.UPDATE_GENERATED_METHODS) {
+                if (type == ActionType.UPDATE_GENERATED_METHODS || type == ActionType.GENERATE_BUILDER) {
                     //Update only if create method exist
                     if (containsCreateMethod) {
-                        addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
+                        addAfterSafe(targetClass, createMethod, lastMethod);
                     }
 
                 }
