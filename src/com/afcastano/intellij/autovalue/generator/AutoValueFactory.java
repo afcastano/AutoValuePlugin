@@ -290,8 +290,14 @@ public class AutoValueFactory {
                 return false;
             }
         }
-
         // TODO: Comparing from parameters to class methods is missing. Need to compare return types with param types.
+
+
+        //Now we check if it uses builder style and the Builder is not there.
+        if(createMethod.getBody().getText().contains(".build()") && !containsBuilderClass()) {
+            return false;
+        }
+
         return true;
     }
 

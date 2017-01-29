@@ -1,3 +1,7 @@
+Release 20160728
+-------
+* 2016-07-28: Improved the way create method is generated according to [#11](https://github.com/afcastano/AutoValuePlugin/issues/11)
+
 Release 20160726
 -------
 * 2016-07-26: Fixed bug [#13](https://github.com/afcastano/AutoValuePlugin/issues/13)

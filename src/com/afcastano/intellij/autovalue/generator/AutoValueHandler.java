@@ -93,7 +93,6 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
         final List<PsiMethod> pendingAddBuilderMethods = generateMissingMethods(factory, targetClass, builderClass);
         final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(factory, targetClass, builderClass);
-        final PsiMethod createMethodWithBuilder = generateCreateMethodWithBuilder(factory, targetClass);
 
         final PsiMethod builderFactoryMethod = factory.newBuilderFactoryMethod();
 
@@ -104,11 +103,34 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                 ? targetClassMethods[targetClassMethods.length - 1]
                 : null;
 
-        Runnable runnable = new Runnable() {
+        //Had to separate builder and crate method write commands. When I run the builder, it deletes the create method.
+        //The create write command will generate it only if it existed before.
+        Runnable generateBuilderRunnable = new Runnable() {
             @Override
             public void run() {
 
+                if (type == ActionType.GENERATE_BUILDER) {
 
+                    addBuilderElements();
+
+                }
+
+                if (type == ActionType.UPDATE_GENERATED_METHODS) {
+                    //Update the builder only if it existed
+                    if(containsBuilderFactoryMethod(targetClass) || factory.containsBuilderClass()) {
+                        addBuilderElements();
+                    }
+                }
+
+                //Delete the create method if exists.
+                if(containsCreateMethod) {
+                    targetClass.findMethodsByName("create", true)[0].delete();
+                }
+
+
+            }
+
+            private void addBuilderElements() {
                 boolean containsBuildMethod = containsBuildMethod(builderClass);
 
                 for (PsiMethod method : pendingAddBuilderMethods) {
@@ -138,36 +160,50 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                 if (!containsBuilderFactoryMethod(targetClass)) {
                     addAfterSafe(targetClass, builderFactoryMethod, lastMethod);
                 }
-
-                if(containsCreateMethod) {
-                    targetClass.findMethodsByName("create", true)[0].delete();
-                }
-
             }
         };
 
-        WriteCommandAction.runWriteCommandAction(project, runnable);
+        WriteCommandAction.runWriteCommandAction(project, generateBuilderRunnable);
 
-        Runnable updateCreateMethod = new Runnable() {
+
+        Runnable generateCreateMethodRunnable = new Runnable() {
             @Override
             public void run() {
+                final PsiMethod createMethod = newCreateMethod(factory, targetClass);
+
                 List<PsiMethod> allGetters = getAllGetters(factory, targetClass);
                 PsiMethod lastMethod = allGetters.size() > 0 ? allGetters.get(allGetters.size() - 1) : null;
+
                 if (type == ActionType.GENERATE_CREATE_METHOD) {
-                    addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
+                    addAfterSafe(targetClass, createMethod, lastMethod);
                 }
 
-                if (type == ActionType.UPDATE_GENERATED_METHODS) {
+                if (type == ActionType.UPDATE_GENERATED_METHODS || type == ActionType.GENERATE_BUILDER) {
                     //Update only if create method exist
                     if (containsCreateMethod) {
-                        addAfterSafe(targetClass, createMethodWithBuilder, lastMethod);
+                        addAfterSafe(targetClass, createMethod, lastMethod);
                     }
 
                 }
             }
         };
 
-        WriteCommandAction.runWriteCommandAction(project, updateCreateMethod);
+        WriteCommandAction.runWriteCommandAction(project, generateCreateMethodRunnable);
+    }
+
+    private PsiMethod newCreateMethod(AutoValueFactory factory, PsiClass targetClass) {
+        final PsiMethod createMethod;
+
+        boolean containsBuilder = factory.containsBuilderClass();
+
+        if (containsBuilder) {
+            createMethod = generateCreateMethodWithBuilder(factory, targetClass);
+
+        } else {
+            createMethod = generateCreateMethodWhenNoBuilder(factory, targetClass);
+
+        }
+        return createMethod;
     }
 
     private PsiMethod generateCreateMethodWithBuilder(AutoValueFactory factory, PsiClass targetClass) {

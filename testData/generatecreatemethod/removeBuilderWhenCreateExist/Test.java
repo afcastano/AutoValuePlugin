@@ -3,7 +3,7 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class BasicTestFile {
 
-
+    <caret>
     public abstract String value();
 
     public abstract int another();
@@ -13,7 +13,10 @@ public abstract class BasicTestFile {
     }
 
     public static BasicTestFile create(String value, int another) {
-        return new AutoValue_BasicTestFile(value, another);
+        return builder()
+                .value(value)
+                .another(another)
+                .build();
     }
 
 }

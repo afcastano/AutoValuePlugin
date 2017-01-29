@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.afcastano.intellij.autovalue</id>
     <name>AutoValue plugin</name>
-    <version>0.0.10</version>
+    <version>0.0.12</version>
     <vendor email="andresfelipecastano@gmail.com" url="https://github.com/afcastano/AutoValuePlugin">AutoValue plugin</vendor>
 
     <description><![CDATA[
