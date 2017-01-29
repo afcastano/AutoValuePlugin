@@ -1,3 +1,8 @@
+Release 20170130
+-------
+* 2017-01-30: Added support for interfaces.
+* 2017-01-30: Ignore `toBuilder` method when generating.
+
 Release 20160728
 -------
 * 2016-07-28: Improved the way create method is generated according to [#11](https://github.com/afcastano/AutoValuePlugin/issues/11)
