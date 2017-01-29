@@ -111,4 +111,13 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGenerateBuilderWithInterfaceHierarchy() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/withinterfacehierarchy/BasicTestFile_expected.java",
+                "generatecreatemethod/withinterfacehierarchy/BasicTestFile.java",
+                "test/Interface1.java",
+                "test/i2/Interface2.java",
+                "test/i3/Interface3.java",
+                AUTOVALUE);
+    }
+
 }

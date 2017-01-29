@@ -275,15 +275,7 @@ public class AutoValueFactory {
             parameterNames.add(parameter.getName());
         }
 
-        for (PsiMethod psiMethod : targetClass.getAllMethods()) {
-            if(!isAbstractGetter(psiMethod)) {
-                continue;
-            }
-
-            if(isReservedMethod(psiMethod)) {
-                continue;
-            }
-
+        for (PsiMethod psiMethod : getAbstractGetters(targetClass)) {
             GetterProperties prop = GetterProperties.fromGetter(psiMethod);
 
             if (!parameterNames.contains(prop.setterParameterName)) {
@@ -306,10 +298,8 @@ public class AutoValueFactory {
         if (builderClass == null) {
             return false;
         }
-        for (PsiMethod psiMethod : targetClass.getAllMethods()) {
-            if (isAbstractGetter(psiMethod)
-                    && !isReservedMethod(psiMethod)
-                    && !alreadyInBuilder(builderClass, psiMethod)) {
+        for (PsiMethod psiMethod : getAbstractGetters(targetClass)) {
+            if (!alreadyInBuilder(builderClass, psiMethod)) {
                 return false;
             }
         }
@@ -440,6 +430,85 @@ public class AutoValueFactory {
 
     public boolean containsCreateMethod() {
         return targetClass.findMethodsByName("create", true).length != 0;
+    }
+
+    @NotNull
+    public List<PsiMethod> getAbstractGetters(PsiClass targetClass) {
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+        abstractGetters.addAll(implementingInterfaceGetters(targetClass));
+
+        for (PsiMethod psiMethod : targetClass.getMethods()) {
+            abstractGetters = removeMethodByName(psiMethod.getName(), abstractGetters);
+            if (isAbstractGetter(psiMethod) && !isReservedMethod(psiMethod)) {
+                abstractGetters.add(psiMethod);
+            }
+        }
+
+        return abstractGetters;
+    }
+
+    private List<PsiMethod> removeMethodByName(String name, List<PsiMethod> methods) {
+        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        for (PsiMethod psiMethod : methods) {
+            if(name.equals(psiMethod.getName())) {
+                continue;
+            }
+
+            abstractGetters.add(psiMethod);
+        }
+
+        return abstractGetters;
+    }
+
+    private boolean containsMethodByName(String name, List<PsiMethod> methods) {
+        for (PsiMethod psiMethod : methods) {
+            if(name.equals(psiMethod.getName())) {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    private List<PsiMethod> implementingInterfaceGetters(PsiClass targetClass) {
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+        PsiClass[] interfaces = targetClass.getInterfaces();
+
+        for (PsiClass interf : interfaces) {
+            List<PsiMethod> newGetters = getInterfaceGetters(interf);
+
+            for (PsiMethod method : newGetters) {
+                //If exists don't add it twice
+                if (containsMethodByName(method.getName(), abstractGetters)) {
+                    continue;
+                }
+
+                abstractGetters.add(method);
+            }
+
+        }
+
+        return abstractGetters;
+    }
+
+    private List<PsiMethod> getInterfaceGetters(PsiClass interfaceClass) {
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+
+        abstractGetters.addAll(implementingInterfaceGetters(interfaceClass));
+
+        for (PsiMethod psiMethod : interfaceClass.getMethods()) {
+            //If exists don't add it twice
+            if (containsMethodByName(psiMethod.getName(), abstractGetters)) {
+                continue;
+            }
+
+            if (isAbstractGetter(psiMethod) && !isReservedMethod(psiMethod)) {
+                abstractGetters.add(psiMethod);
+            }
+        }
+
+        return abstractGetters;
     }
 
     private static class GetterProperties {

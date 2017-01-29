@@ -151,4 +151,20 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
                 AUTOVALUE);
     }
 
+    public void testGenerateBuilderWithInterfaceCorrectly() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterface/BasicTestFile_expected.java",
+                "generatebuilder/withinterface/BasicTestFile.java",
+                "test/Interface1.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBuilderWithInterfaceHierarchy() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterfacehierarchy/BasicTestFile_expected.java",
+                "generatebuilder/withinterfacehierarchy/BasicTestFile.java",
+                "test/Interface1.java",
+                "test/i2/Interface2.java",
+                "test/i3/Interface3.java",
+                AUTOVALUE);
+    }
+
 }
