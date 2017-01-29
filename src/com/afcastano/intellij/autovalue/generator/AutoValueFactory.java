@@ -275,7 +275,7 @@ public class AutoValueFactory {
             parameterNames.add(parameter.getName());
         }
 
-        for (PsiMethod psiMethod : targetClass.getMethods()) {
+        for (PsiMethod psiMethod : targetClass.getAllMethods()) {
             if(!isAbstractGetter(psiMethod)) {
                 continue;
             }
@@ -306,14 +306,14 @@ public class AutoValueFactory {
         if (builderClass == null) {
             return false;
         }
-        for (PsiMethod psiMethod : targetClass.getMethods()) {
+        for (PsiMethod psiMethod : targetClass.getAllMethods()) {
             if (isAbstractGetter(psiMethod)
                     && !isReservedMethod(psiMethod)
                     && !alreadyInBuilder(builderClass, psiMethod)) {
                 return false;
             }
         }
-        for (PsiMethod psiMethod : builderClass.getMethods()) {
+        for (PsiMethod psiMethod : builderClass.getAllMethods()) {
             if (isBuilderSetter(psiMethod) && !alreadyInClass(targetClass, psiMethod)) {
                 return false;
             }
@@ -384,7 +384,7 @@ public class AutoValueFactory {
     }
 
     public boolean alreadyInBuilder(PsiClass builderClass, PsiMethod psiMethod) {
-        for (PsiMethod method : builderClass.getMethods()) {
+        for (PsiMethod method : builderClass.getAllMethods()) {
             if (isBuilderSetter(method) && method.getName().equals(psiMethod.getName())) {
                 return true;
             }
@@ -393,7 +393,7 @@ public class AutoValueFactory {
     }
 
     public boolean alreadyInClass(PsiClass targetClass, PsiMethod psiMethod) {
-        for (PsiMethod method : targetClass.getMethods()) {
+        for (PsiMethod method : targetClass.getAllMethods()) {
             if (isAbstractGetter(method) && method.getName().equals(psiMethod.getName())) {
                 return true;
             }
@@ -402,7 +402,11 @@ public class AutoValueFactory {
     }
 
     public boolean isAbstractGetter(PsiMethod psiMethod) {
-        boolean isAbstract = psiMethod.getModifierList().hasExplicitModifier("abstract");
+        if(psiMethod.isConstructor()) {
+            return false;
+        }
+
+        boolean isAbstract = psiMethod.getModifierList().hasModifierProperty("abstract");
         boolean noParameters = psiMethod.getParameterList().getParametersCount() == 0;
         boolean returnsSomething = !psiMethod.getReturnType().equals(PsiType.VOID);
         boolean noBody = psiMethod.getBody() == null;
@@ -415,6 +419,10 @@ public class AutoValueFactory {
 
 
     public boolean isGetter(PsiMethod psiMethod) {
+        if (psiMethod.isConstructor()) {
+            return false;
+        }
+
         boolean noParameters = psiMethod.getParameterList().getParametersCount() == 0;
         boolean returnsSomething = !psiMethod.getReturnType().equals(PsiType.VOID);
         boolean isStatic = psiMethod.getModifierList().hasExplicitModifier("static");
@@ -422,6 +430,10 @@ public class AutoValueFactory {
     }
 
     public boolean isBuilderSetter(PsiMethod psiMethod) {
+        if (psiMethod.isConstructor()) {
+            return false;
+        }
+
         String methodReturnName = psiMethod.getReturnType().getPresentableText();
         return methodReturnName.equals("Builder");
     }

@@ -171,7 +171,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             public void run() {
                 final PsiMethod createMethod = newCreateMethod(factory, targetClass);
 
-                List<PsiMethod> allGetters = getAllGetters(factory, targetClass);
+                List<PsiMethod> allGetters = getThisClassGetters(factory, targetClass);
                 PsiMethod lastMethod = allGetters.size() > 0 ? allGetters.get(allGetters.size() - 1) : null;
 
                 if (type == ActionType.GENERATE_CREATE_METHOD) {
@@ -218,16 +218,85 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
     @NotNull
     private List<PsiMethod> getAbstractGetters(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+        abstractGetters.addAll(implementingInterfaceGetters(factory, targetClass));
+
         for (PsiMethod psiMethod : targetClass.getMethods()) {
+            abstractGetters = removeMethodByName(psiMethod.getName(), abstractGetters);
             if (factory.isAbstractGetter(psiMethod) && !factory.isReservedMethod(psiMethod)) {
                 abstractGetters.add(psiMethod);
             }
         }
+
         return abstractGetters;
     }
 
-    private List<PsiMethod> getAllGetters(AutoValueFactory factory, PsiClass targetClass) {
+    private List<PsiMethod> removeMethodByName(String name, List<PsiMethod> methods) {
+        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        for (PsiMethod psiMethod : methods) {
+            if(name.equals(psiMethod.getName())) {
+                continue;
+            }
+
+            abstractGetters.add(psiMethod);
+        }
+
+        return abstractGetters;
+    }
+
+    private boolean containsMethodByName(String name, List<PsiMethod> methods) {
+        final List<PsiMethod> abstractGetters = new ArrayList<>();
+        for (PsiMethod psiMethod : methods) {
+            if(name.equals(psiMethod.getName())) {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public List<PsiMethod> implementingInterfaceGetters(AutoValueFactory factory, PsiClass targetClass) {
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+        PsiClass[] interfaces = targetClass.getInterfaces();
+
+        for (PsiClass interf : interfaces) {
+            List<PsiMethod> newGetters = getInterfaceGetters(factory, interf);
+
+            for (PsiMethod method : newGetters) {
+                //If exists don't add it twice
+                if (containsMethodByName(method.getName(), abstractGetters)) {
+                    continue;
+                }
+
+                abstractGetters.add(method);
+            }
+
+        }
+
+        return abstractGetters;
+    }
+
+    private List<PsiMethod> getInterfaceGetters(AutoValueFactory factory, PsiClass interfaceClass) {
+        List<PsiMethod> abstractGetters = new ArrayList<>();
+
+        abstractGetters.addAll(implementingInterfaceGetters(factory, interfaceClass));
+
+        for (PsiMethod psiMethod : interfaceClass.getMethods()) {
+            //If exists don't add it twice
+            if (containsMethodByName(psiMethod.getName(), abstractGetters)) {
+                continue;
+            }
+
+            if (factory.isAbstractGetter(psiMethod) && !factory.isReservedMethod(psiMethod)) {
+                abstractGetters.add(psiMethod);
+            }
+        }
+
+        return abstractGetters;
+    }
+
+    private List<PsiMethod> getThisClassGetters(AutoValueFactory factory, PsiClass targetClass) {
         final List<PsiMethod> abstractGetters = new ArrayList<>();
         for (PsiMethod psiMethod : targetClass.getMethods()) {
             if (factory.isGetter(psiMethod)) {
@@ -241,7 +310,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     private List<PsiMethod> generateMissingMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
 
-        for (PsiMethod psiMethod : targetClass.getMethods()) {
+        for (PsiMethod psiMethod : targetClass.getAllMethods()) {
             if (factory.isAbstractGetter(psiMethod) && !factory.isReservedMethod(psiMethod)
                     && !factory.alreadyInBuilder(builderClass, psiMethod)) {
                 pendingBuilderMethods.add(factory.newBuilderSetter(psiMethod));
@@ -254,7 +323,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     private List<PsiMethod> generateExtraMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
 
-        for (PsiMethod psiMethod : builderClass.getMethods()) {
+        for (PsiMethod psiMethod : builderClass.getAllMethods()) {
             if (factory.isBuilderSetter(psiMethod) && !factory.alreadyInClass(targetClass, psiMethod)) {
                 pendingBuilderMethods.add(psiMethod);
             }
