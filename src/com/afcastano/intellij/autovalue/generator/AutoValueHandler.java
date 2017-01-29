@@ -211,6 +211,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         return factory.newCreateMethodWithBuilder(abstractGetters);
     }
 
+    private PsiMethod generateCreateMethodWhenNoBuilder(AutoValueFactory factory, PsiClass targetClass) {
+        final List<PsiMethod> abstractGetters = getAbstractGetters(factory, targetClass);
+        return factory.newCreateMethodWhenNoBuilder(abstractGetters);
+    }
+
     @NotNull
     private List<PsiMethod> getAbstractGetters(AutoValueFactory factory, PsiClass targetClass) {
         final List<PsiMethod> abstractGetters = new ArrayList<>();

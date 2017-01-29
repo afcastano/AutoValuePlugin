@@ -1,15 +1,6 @@
 package com.afcastano.intellij.autovalue;
 
-import com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction;
-import com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction;
-import com.afcastano.intellij.autovalue.actions.UpdateGeneratedMethodsAction;
-import com.afcastano.intellij.autovalue.intentions.AddBuilderIntention;
-import com.afcastano.intellij.autovalue.intentions.AddCreateMethodIntention;
-import com.afcastano.intellij.autovalue.intentions.UpdateGeneratedMethodsIntention;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NonNls;
 
 import static com.afcastano.intellij.autovalue.AutoValuePluginTestUtils.AUTOVALUE;
 
@@ -45,6 +36,12 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
     public void testGenerateBasicCreateMethodWorksWhenBuilderExists() {
         utils.runGenerateCreateMethodActions("generatecreatemethod/builderexist/Test_expected.java",
                 "generatecreatemethod/builderexist/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBasicCreateMethodWithBuilderIgnoresToBuilder() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/builderexistignorestobuilder/Test_expected.java",
+                "generatecreatemethod/builderexistignorestobuilder/Test.java",
                 AUTOVALUE);
     }
 
