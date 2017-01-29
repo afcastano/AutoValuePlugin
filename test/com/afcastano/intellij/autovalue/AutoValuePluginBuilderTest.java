@@ -89,6 +89,20 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
 
     }
 
+    public void testIngoreToBuilderMethodWhenAdding() {
+        utils.runUpdateMethodsActions("generatebuilder/ignoretobuilderwhenadding/Test_expected.java",
+                "generatebuilder/ignoretobuilderwhenadding/Test.java",
+                AUTOVALUE);
+
+    }
+
+    public void testIngoreToBuilderMethodFirstTime() {
+        utils.runGenerateBuilderActions("generatebuilder/ignoretobuilderfirsttime/Test_expected.java",
+                "generatebuilder/ignoretobuilderfirsttime/Test.java",
+                AUTOVALUE);
+
+    }
+
     public void testAddBuilderFactory() {
         utils.runUpdateMethodsActions("generatebuilder/addbuilderfactory/Test_expected.java",
                 "generatebuilder/addbuilderfactory/Test.java",

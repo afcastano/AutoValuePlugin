@@ -280,6 +280,10 @@ public class AutoValueFactory {
                 continue;
             }
 
+            if(isReservedMethod(psiMethod)) {
+                continue;
+            }
+
             GetterProperties prop = GetterProperties.fromGetter(psiMethod);
 
             if (!parameterNames.contains(prop.setterParameterName)) {
@@ -297,7 +301,9 @@ public class AutoValueFactory {
             return false;
         }
         for (PsiMethod psiMethod : targetClass.getMethods()) {
-            if (isAbstractGetter(psiMethod) && !alreadyInBuilder(builderClass, psiMethod)) {
+            if (isAbstractGetter(psiMethod)
+                    && !isReservedMethod(psiMethod)
+                    && !alreadyInBuilder(builderClass, psiMethod)) {
                 return false;
             }
         }
@@ -396,6 +402,11 @@ public class AutoValueFactory {
         boolean noBody = psiMethod.getBody() == null;
         return isAbstract && noParameters && returnsSomething && noBody;
     }
+
+    public boolean isReservedMethod(PsiMethod psiMethod) {
+        return isAbstractGetter(psiMethod) && "toBuilder".equals(psiMethod.getName());
+    }
+
 
     public boolean isGetter(PsiMethod psiMethod) {
         boolean noParameters = psiMethod.getParameterList().getParametersCount() == 0;

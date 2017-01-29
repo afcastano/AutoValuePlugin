@@ -175,16 +175,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         return factory.newCreateMethodWithBuilder(abstractGetters);
     }
 
-    private PsiMethod generateCreateMethodWhenNoBuilder(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = getAbstractGetters(factory, targetClass);
-        return factory.newCreateMethodWhenNoBuilder(abstractGetters);
-    }
-
     @NotNull
     private List<PsiMethod> getAbstractGetters(AutoValueFactory factory, PsiClass targetClass) {
         final List<PsiMethod> abstractGetters = new ArrayList<>();
         for (PsiMethod psiMethod : targetClass.getMethods()) {
-            if (factory.isAbstractGetter(psiMethod)) {
+            if (factory.isAbstractGetter(psiMethod) && !factory.isReservedMethod(psiMethod)) {
                 abstractGetters.add(psiMethod);
             }
         }
@@ -206,7 +201,8 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
 
         for (PsiMethod psiMethod : targetClass.getMethods()) {
-            if (factory.isAbstractGetter(psiMethod) && !factory.alreadyInBuilder(builderClass, psiMethod)) {
+            if (factory.isAbstractGetter(psiMethod) && !factory.isReservedMethod(psiMethod)
+                    && !factory.alreadyInBuilder(builderClass, psiMethod)) {
                 pendingBuilderMethods.add(factory.newBuilderSetter(psiMethod));
             }
         }

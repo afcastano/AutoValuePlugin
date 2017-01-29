@@ -35,6 +35,12 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGeneratCreateMethodIgnoresToBuilder() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/generateignorestobuilder/BasicTestFile_expected.java",
+                "generatecreatemethod/generateignorestobuilder/BasicTestFile.java",
+                AUTOVALUE);
+    }
+
 
     public void testGenerateBasicCreateMethodWorksWhenBuilderExists() {
         utils.runGenerateCreateMethodActions("generatecreatemethod/builderexist/Test_expected.java",
@@ -45,6 +51,12 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
     public void testUpdateWhenAddNewPropertyAtTheEnd() {
         utils.runUpdateMethodsActions("generatecreatemethod/addNewPropertyAtTheEnd/Test_expected.java",
                 "generatecreatemethod/addNewPropertyAtTheEnd/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testUpdateIgnoresBuilder() {
+        utils.runUpdateMethodsActions("generatecreatemethod/upadteignorestobuilder/Test_expected.java",
+                "generatecreatemethod/upadteignorestobuilder/Test.java",
                 AUTOVALUE);
     }
 
