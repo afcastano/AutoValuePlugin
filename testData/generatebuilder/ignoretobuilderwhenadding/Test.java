@@ -12,7 +12,8 @@ public abstract class BasicTestFile {
 
     public abstract int value4();
 
-    public abstract Builder toBuilder();
+    //Checks the return type
+    public abstract Builder toBuilders();
 
     public static Builder builder() {
         return new AutoValue_BasicTestFile.Builder();

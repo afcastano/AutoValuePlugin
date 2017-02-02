@@ -8,6 +8,7 @@ public abstract class BasicTestFile {
 
     public abstract Integer value2();
 
+    //Checks the return type
     public abstract Builder toBuilder();
 
 }

@@ -404,7 +404,7 @@ public class AutoValueFactory {
     }
 
     public boolean isReservedMethod(PsiMethod psiMethod) {
-        return isAbstractGetter(psiMethod) && "toBuilder".equals(psiMethod.getName());
+        return isAbstractGetter(psiMethod) && "Builder".equals(psiMethod.getReturnType().getPresentableText());
     }
 
 

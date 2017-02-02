@@ -12,7 +12,8 @@ public abstract class BasicTestFile {
         return 0;
     }
 
-    public abstract Builder toBuilder();
+    //Checks the return type
+    public abstract Builder toBuilderBlah();
 
     public static BasicTestFile create(String value, int another) {
         return builder()

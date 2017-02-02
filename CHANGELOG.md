@@ -1,3 +1,7 @@
+Release 20170203
+-------
+* 2017-02-03: Ignores `toBuilder` based on return type. [#15](https://github.com/afcastano/AutoValuePlugin/issues/15)
+
 Release 20170130
 -------
 * 2017-01-30: Added support for interfaces.[#14](https://github.com/afcastano/AutoValuePlugin/issues/14)

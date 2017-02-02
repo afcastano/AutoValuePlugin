@@ -12,6 +12,7 @@ public abstract class BasicTestFile {
         return 0;
     }
 
-    public abstract Builder toBuilder();
+    //Checks the return type
+    public abstract Builder toBuilderAny();
 
 }
