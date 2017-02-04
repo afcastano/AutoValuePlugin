@@ -12,6 +12,10 @@ ___
 AutoValue is awesome.
 I can't explain it better than [that](https://github.com/google/auto/blob/master/value/userguide/index.md), or [that](https://docs.google.com/presentation/d/14u_h-lMn7f1rXE1nDiLX0azS3IkgjGl5uxp5jGJ75RE/edit#slide=id.g2a5e9c4a8_00).
 
+### Contribute:
+If you want to contribute, follow this [guide.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/CONTRIBUTE.md)
+To set up the project, read [this.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/PROJECT_SETUP.md)
+
 ### Functionality:
 
 - Adds an @AutoValue.Builder static class inside the target @AutoValue class.
