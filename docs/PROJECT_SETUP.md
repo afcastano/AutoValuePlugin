@@ -40,11 +40,11 @@ That's it, the project should be configured and ready to go.
   * Run the new configuration, it will fire up a new instance of IntelliJ with the development version of the plugin installed.
 ![aja][Run]
 
-[src-github]:(img/GitHub.png)
-[module-folders]:(img/ModuleFolders.png)
-[Library]:(img/Library.png)
-[DefaultModule]:(img/DefaultModule.png)
-[UseExisting]:(img/UseExisting.png)
-[ConfigureSDK]:(img/ConfigureSDK.png)
-[Java7]:(img/Java7.png)
-[Run]:(img/Run.png)
+[src-github]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/GitHub.png)
+[module-folders]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/ModuleFolders.png)
+[Library]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Library.png)
+[DefaultModule]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/DefaultModule.png)
+[UseExisting]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/UseExisting.png)
+[ConfigureSDK]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/ConfigureSDK.png)
+[Java7]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Java7.png)
+[Run]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Run.png)
