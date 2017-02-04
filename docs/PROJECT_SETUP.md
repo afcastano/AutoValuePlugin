@@ -17,7 +17,7 @@ According to the [official guidelines](https://www.jetbrains.com/help/idea/2016.
 3. Select *Create project from existing sources* and click next
 4. Select location and name and click next
 5. Un-select all folders except the first two corresponding to `src` and `test`
-![aja][module-folders]
+![alt tag][module-folders]
 6. If a library is detected, remove it. In this case `AutoValuePlugin` on the dist folder might have been detected. Un-select it and click next.
 ![aja][Library]
 7. In the module structure dialog, select the module and click next.
@@ -41,7 +41,7 @@ That's it, the project should be configured and ready to go.
 ![aja][Run]
 
 
-[module-folders]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/ModuleFolders.png)
+[module-folders]:(https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/ModuleFolders.png)
 [Library]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Library.png)
 [DefaultModule]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/DefaultModule.png)
 [UseExisting]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/UseExisting.png)
