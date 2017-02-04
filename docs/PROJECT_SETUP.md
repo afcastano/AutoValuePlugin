@@ -17,18 +17,18 @@ According to the [official guidelines](https://www.jetbrains.com/help/idea/2016.
 3. Select *Create project from existing sources* and click next
 4. Select location and name and click next
 5. Un-select all folders except the first two corresponding to `src` and `test`
-![alt tag][module-folders]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/ModuleFolders.png)
 6. If a library is detected, remove it. In this case `AutoValuePlugin` on the dist folder might have been detected. Un-select it and click next.
-![aja][Library]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/Library.png)
 7. In the module structure dialog, select the module and click next.
-![aja][DefaultModule]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/DefaultModule.png)
 8. A warning will appear indicating that the module already exists. **Click Reuse**.
-![aja][UseExisting]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/UseExisting.png)
 9. After this, make sure the *IntelliJ Platform Plugin SDK* appears on the list (According to [pre-requisites](#pre-requisites) ) and hit next.
-![aja][ConfigureSDK]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/ConfigureSDK.png)
 10. Click Finish.
 11. Go to Project settings and select `7 - Diamonds` as the Language level. Click OK.
-![aja][Java7]
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/Java7.png)
 
 That's it, the project should be configured and ready to go.
 
@@ -38,13 +38,4 @@ That's it, the project should be configured and ready to go.
 - To manually test the plugin:
   * Create a new run configuration of type plugin, Give any name and select AutoValuePlugin for the "Use Classpath of module" box.
   * Run the new configuration, it will fire up a new instance of IntelliJ with the development version of the plugin installed.
-![aja][Run]
-
-
-[module-folders]:(https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/ModuleFolders.png)
-[Library]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Library.png)
-[DefaultModule]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/DefaultModule.png)
-[UseExisting]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/UseExisting.png)
-[ConfigureSDK]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/ConfigureSDK.png)
-[Java7]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Java7.png)
-[Run]:(https://github.com/afcastano/AutoValuePlugin/tree/master/docs/img/Run.png)
+![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/tree/master/docs/img/Run.png)
