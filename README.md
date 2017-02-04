@@ -14,7 +14,6 @@ I can't explain it better than [that](https://github.com/google/auto/blob/master
 
 ### Contribute:
 If you want to contribute, follow this [guide.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/CONTRIBUTE.md)
-To set up the project, read [this.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/PROJECT_SETUP.md)
 
 ### Functionality:
 
