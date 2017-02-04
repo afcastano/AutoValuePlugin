@@ -24,7 +24,7 @@ According to the [official guidelines](https://www.jetbrains.com/help/idea/2016.
 ![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/master/docs/img/DefaultModule.png)
 8. A warning will appear indicating that the module already exists. **Click Reuse**.
 ![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/master/docs/img/UseExisting.png)
-9. After this, make sure the *IntelliJ Platform Plugin SDK* appears on the list (According to [pre-requisites](#pre-requisites) ) and hit next.
+9. After this, make sure the *IntelliJ Platform Plugin SDK* appears on the list (According to [pre-requisites](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/PROJECT_SETUP.md#pre-requisites) ) and hit next.
 ![alt tag](https://raw.githubusercontent.com/afcastano/AutoValuePlugin/master/docs/img/ConfigureSDK.png)
 10. Click Finish.
 11. Go to Project settings and select `7 - Diamonds` as the Language level. Click OK.
