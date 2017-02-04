@@ -12,7 +12,7 @@ According to the [official guidelines](https://www.jetbrains.com/help/idea/2016.
 ### IDE Set up
 
 1. Open up IntelliJ and select *Create project from version control*
-[[src-github]]
+![alt tag][src-github]
 2. Select GitHub and enter `https://github.com/afcastano/AutoValuePlugin.git`. Click *clone*
 3. Select *Create project from existing sources* and click next
 4. Select location and name and click next
