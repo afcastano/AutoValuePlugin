@@ -1,3 +1,7 @@
+Release 20170208
+----------------
+* 2017-02-08: Ignores `android.os.Parcelable` and `java.util.*` from interface method generation. [#14](https://github.com/afcastano/AutoValuePlugin/issues/14)
+
 Release 20170203
 -------
 * 2017-02-03: Ignores `toBuilder` based on return type. [#15](https://github.com/afcastano/AutoValuePlugin/issues/15)

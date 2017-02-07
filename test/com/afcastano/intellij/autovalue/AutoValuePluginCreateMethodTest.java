@@ -120,4 +120,13 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGenerateBuilderWithInterfaceIgnoringBlacklisted() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/withinterfaceignoresblacklisted/BasicTestFile_expected.java",
+                "generatecreatemethod/withinterfaceignoresblacklisted/BasicTestFile.java",
+                "test/Interface1.java",
+                "java/util/Map.java",
+                "android/os/Parcelable.java",
+                AUTOVALUE);
+    }
+
 }

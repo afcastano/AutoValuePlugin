@@ -158,6 +158,15 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
                 AUTOVALUE);
     }
 
+    public void testGenerateBuilderWithInterfaceIgnoringBlacklistedCorrectly() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterfaceignoresblacklisted/BasicTestFile_expected.java",
+                "generatebuilder/withinterfaceignoresblacklisted/BasicTestFile.java",
+                "test/Interface1.java",
+                "java/util/Map.java",
+                "android/os/Parcelable.java",
+                AUTOVALUE);
+    }
+
     public void testGenerateBuilderWithInterfaceHierarchy() {
         utils.runGenerateBuilderActions("generatebuilder/withinterfacehierarchy/BasicTestFile_expected.java",
                 "generatebuilder/withinterfacehierarchy/BasicTestFile.java",

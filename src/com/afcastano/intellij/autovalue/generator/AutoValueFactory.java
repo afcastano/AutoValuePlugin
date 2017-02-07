@@ -34,7 +34,7 @@ public class AutoValueFactory {
                     "com.google.auto.value.AutoValue",
                     "auto.parcel.AutoParcel",
                     "auto.parcelgson.AutoParcelGson"
-                    );
+            );
 
     private PsiType builderType;
     private PsiClass builderClass;
@@ -435,7 +435,7 @@ public class AutoValueFactory {
     @NotNull
     public List<PsiMethod> getAbstractGetters(PsiClass targetClass) {
         List<PsiMethod> abstractGetters = new ArrayList<>();
-        abstractGetters.addAll(implementingInterfaceGetters(targetClass));
+        abstractGetters.addAll(getGettersFromAllExtendedInterfaces(targetClass));
 
         for (PsiMethod psiMethod : targetClass.getMethods()) {
             abstractGetters = removeMethodByName(psiMethod.getName(), abstractGetters);
@@ -471,14 +471,17 @@ public class AutoValueFactory {
         return false;
     }
 
-    private List<PsiMethod> implementingInterfaceGetters(PsiClass targetClass) {
+    private List<PsiMethod> getGettersFromAllExtendedInterfaces(PsiClass targetClass) {
         List<PsiMethod> abstractGetters = new ArrayList<>();
         PsiClass[] interfaces = targetClass.getInterfaces();
 
-        for (PsiClass interf : interfaces) {
-            List<PsiMethod> newGetters = getInterfaceGetters(interf);
+        for (PsiClass currentInterface : interfaces) {
+            if (isBlackListedInterface(currentInterface)) {
+                continue;
+            }
+            List<PsiMethod> interfaceGetters = gettersFromInterface(currentInterface);
 
-            for (PsiMethod method : newGetters) {
+            for (PsiMethod method : interfaceGetters) {
                 //If exists don't add it twice
                 if (containsMethodByName(method.getName(), abstractGetters)) {
                     continue;
@@ -492,10 +495,20 @@ public class AutoValueFactory {
         return abstractGetters;
     }
 
-    private List<PsiMethod> getInterfaceGetters(PsiClass interfaceClass) {
+    private boolean isBlackListedInterface(PsiClass psiInterface) {
+        String qualifiedName = psiInterface.getQualifiedName();
+        if(qualifiedName == null) {
+            return false;
+        }
+
+        return qualifiedName.equals("android.os.Parcelable")
+                || qualifiedName.startsWith("java.util.");
+    }
+
+    private List<PsiMethod> gettersFromInterface(PsiClass interfaceClass) {
         List<PsiMethod> abstractGetters = new ArrayList<>();
 
-        abstractGetters.addAll(implementingInterfaceGetters(interfaceClass));
+        abstractGetters.addAll(getGettersFromAllExtendedInterfaces(interfaceClass));
 
         for (PsiMethod psiMethod : interfaceClass.getMethods()) {
             //If exists don't add it twice
