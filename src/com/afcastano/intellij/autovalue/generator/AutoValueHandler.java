@@ -1,5 +1,10 @@
 package com.afcastano.intellij.autovalue.generator;
 
+import com.afcastano.intellij.autovalue.constants.ActionType;
+import com.afcastano.intellij.autovalue.util.PsiClassUtil;
+import com.afcastano.intellij.autovalue.util.PsiMethodUtil;
+import com.afcastano.intellij.autovalue.util.validation.ValidationUtil;
+import com.afcastano.intellij.autovalue.util.validation.HandlerValidator;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.lang.ContextAwareActionHandler;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -18,8 +23,15 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
     private ActionType type;
 
-    private AutoValueHandler(ActionType type) {
+    private HandlerValidator validator ;
+
+    AutoValueHandler(ActionType type) {
         this.type = type;
+        this.validator = new HandlerValidator(type);
+    }
+
+    public HandlerValidator getValidator() {
+        return validator;
     }
 
     @Override
@@ -52,35 +64,8 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             return false;
         }
 
-        return shouldHandle(factory);
+        return validator.shouldHandle(factory);
 
-    }
-
-    public boolean shouldHandle(AutoValueFactory factory) {
-        switch (type) {
-            case GENERATE_BUILDER:
-                return shouldGenerateBuilder(factory);
-            case UPDATE_GENERATED_METHODS:
-                return shouldUpdateMethods(factory);
-            case GENERATE_CREATE_METHOD:
-                return shouldGenerateCreateMethod(factory);
-            default:
-                return false;
-        }
-    }
-
-    private boolean shouldGenerateCreateMethod(AutoValueFactory factory) {
-        return !factory.containsCreateMethod();
-    }
-
-    private boolean shouldUpdateMethods(AutoValueFactory factory) {
-        boolean builderNotUpToDate = factory.containsBuilderClass() && !factory.isBuilderUpToDate();
-        boolean createMethodNotUpToDate = factory.containsCreateMethod() && !factory.isCreateMethodUpToDate();
-        return builderNotUpToDate || createMethodNotUpToDate;
-    }
-
-    private boolean shouldGenerateBuilder(AutoValueFactory factory) {
-        return !factory.containsBuilderClass();
     }
 
     private void processClass(final AutoValueFactory factory) {
@@ -92,11 +77,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         final PsiClass builderClass = factory.getBuilderClass();
 
         final List<PsiMethod> pendingAddBuilderMethods = generateMissingMethods(factory, targetClass, builderClass);
-        final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(factory, targetClass, builderClass);
+        final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(targetClass, builderClass);
 
         final PsiMethod builderFactoryMethod = factory.newBuilderFactoryMethod();
 
-        final boolean containsCreateMethod = containsCreateMethod(targetClass);
+        final boolean containsCreateMethod = ValidationUtil.containsCreateMethod(targetClass);
 
         PsiMethod[] targetClassMethods = targetClass.getMethods();
         final PsiMethod lastMethod = targetClassMethods.length > 0
@@ -117,7 +102,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
 
                 if (type == ActionType.UPDATE_GENERATED_METHODS) {
                     //Update the builder only if it existed
-                    if(containsBuilderFactoryMethod(targetClass) || factory.containsBuilderClass()) {
+                    if(ValidationUtil.containsBuilderFactoryMethod(targetClass) || ValidationUtil.containsBuilderClass(factory.getTargetClass())) {
                         addBuilderElements();
                     }
                 }
@@ -131,7 +116,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             }
 
             private void addBuilderElements() {
-                boolean containsBuildMethod = containsBuildMethod(builderClass);
+                boolean containsBuildMethod = ValidationUtil.containsBuildMethod(builderClass);
 
                 for (PsiMethod method : pendingAddBuilderMethods) {
 
@@ -153,11 +138,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                     builderClass.add(factory.getBuildMethod());
                 }
 
-                if (!factory.containsBuilderClass()) {
+                if (!ValidationUtil.containsBuilderClass(factory.getTargetClass())) {
                     targetClass.add(builderClass);
                 }
 
-                if (!containsBuilderFactoryMethod(targetClass)) {
+                if (!ValidationUtil.containsBuilderFactoryMethod(targetClass)) {
                     addAfterSafe(targetClass, builderFactoryMethod, lastMethod);
                 }
             }
@@ -194,7 +179,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     private PsiMethod newCreateMethod(AutoValueFactory factory, PsiClass targetClass) {
         final PsiMethod createMethod;
 
-        boolean containsBuilder = factory.containsBuilderClass();
+        boolean containsBuilder = ValidationUtil.containsBuilderClass(factory.getTargetClass());
 
         if (containsBuilder) {
             createMethod = generateCreateMethodWithBuilder(factory, targetClass);
@@ -207,21 +192,21 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     }
 
     private PsiMethod generateCreateMethodWithBuilder(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = factory.getAbstractGetters(targetClass);
+        final List<PsiMethod> abstractGetters = PsiClassUtil.getAbstractGetters(targetClass);
         return factory.newCreateMethodWithBuilder(abstractGetters);
     }
 
     private PsiMethod generateCreateMethodWhenNoBuilder(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = factory.getAbstractGetters(targetClass);
+        final List<PsiMethod> abstractGetters = PsiClassUtil.getAbstractGetters(targetClass);
         return factory.newCreateMethodWhenNoBuilder(abstractGetters);
     }
 
 
 
-    private List<PsiMethod> getThisClassGetters(AutoValueFactory factory, PsiClass targetClass) {
+    private static List<PsiMethod> getThisClassGetters(AutoValueFactory factory, PsiClass targetClass) {
         final List<PsiMethod> abstractGetters = new ArrayList<>();
         for (PsiMethod psiMethod : targetClass.getMethods()) {
-            if (factory.isGetter(psiMethod)) {
+            if (PsiMethodUtil.isGetter(psiMethod)) {
                 abstractGetters.add(psiMethod);
             }
         }
@@ -229,11 +214,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     }
 
     @NotNull
-    private List<PsiMethod> generateMissingMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
+    private static List<PsiMethod> generateMissingMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
 
-        for (PsiMethod psiMethod : factory.getAbstractGetters(targetClass)) {
-            if (!factory.alreadyInBuilder(builderClass, psiMethod)) {
+        for (PsiMethod psiMethod : PsiClassUtil.getAbstractGetters(targetClass)) {
+            if (!PsiClassUtil.alreadyInBuilder(builderClass, psiMethod)) {
                 pendingBuilderMethods.add(factory.newBuilderSetter(psiMethod));
             }
         }
@@ -241,28 +226,15 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     }
 
     @NotNull
-    private List<PsiMethod> generateExtraMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
+    private List<PsiMethod> generateExtraMethods(PsiClass targetClass, PsiClass builderClass) {
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
 
         for (PsiMethod psiMethod : builderClass.getAllMethods()) {
-            if (factory.isBuilderSetter(psiMethod) && !factory.alreadyInClass(targetClass, psiMethod)) {
+            if (PsiMethodUtil.isBuilderSetter(psiMethod) && !PsiMethodUtil.alreadyInClass(targetClass, psiMethod)) {
                 pendingBuilderMethods.add(psiMethod);
             }
         }
         return pendingBuilderMethods;
-    }
-
-    //TODO Duplicated logic on factory
-    private boolean containsBuilderFactoryMethod(PsiClass targetClass) {
-        return targetClass.findMethodsByName("builder", true).length != 0;
-    }
-
-    private boolean containsBuildMethod(PsiClass builderClass) {
-        return builderClass.findMethodsByName("build", true).length != 0;
-    }
-
-    private boolean containsCreateMethod(PsiClass targetClass) {
-        return targetClass.findMethodsByName("create", true).length != 0;
     }
 
     private void addAfterSafe(PsiClass targetClass, PsiMethod toAdd, PsiMethod anchor ) {
@@ -277,19 +249,4 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         }
     }
 
-    private enum ActionType {
-        GENERATE_BUILDER, GENERATE_CREATE_METHOD, UPDATE_GENERATED_METHODS
-    }
-
-    public static AutoValueHandler newGenerateBuilderHandler() {
-        return new AutoValueHandler(ActionType.GENERATE_BUILDER);
-    }
-
-    public static AutoValueHandler newUpdateBuilderHandler() {
-        return new AutoValueHandler(ActionType.UPDATE_GENERATED_METHODS);
-    }
-
-    public static AutoValueHandler newGenerateCreateMethodHandler() {
-        return new AutoValueHandler(ActionType.GENERATE_CREATE_METHOD);
-    }
 }
