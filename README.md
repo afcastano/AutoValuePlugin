@@ -21,7 +21,7 @@ If you want to contribute, follow this [guide.](https://github.com/afcastano/Aut
 - Creates a static builder method that returns the @AutoValue.Builder instance.
 - Optionally, generates the [create](https://github.com/google/auto/blob/master/value/userguide/index.md#in-your-value-class) factory method. [See #11](https://github.com/afcastano/AutoValuePlugin/issues/11)
 - If the builder exists, it will either add the missing properties to it or remove the ones that are not needed any more.
-- It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson). Thanks to [@vjames19](https://github.com/vjames19)!
+- It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson).
 
 ### How to use:
 
