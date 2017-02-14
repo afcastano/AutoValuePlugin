@@ -16,7 +16,6 @@ I can't explain it better than [that](https://github.com/google/auto/blob/master
 If you want to contribute, follow this [guide.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/CONTRIBUTE.md)
 
 ### Functionality:
-
 - Adds an @AutoValue.Builder static class inside the target @AutoValue class.
 - Searches for all abstract getters on the target class and transforms it into builder methods in the builder.
 - Creates a static builder method that returns the @AutoValue.Builder instance.
@@ -31,3 +30,10 @@ The plugin adds new context menu actions, [code generation actions](https://www.
 There are also other ways of using the plugin. Here is a short tutorial video (1:25 mins):
 
 https://www.youtube.com/watch?v=sMX9PT3ecu8
+
+### A big THANK YOU to these contributors:
+- [@vjames19](https://github.com/vjames19) #2
+- [@guavabot](https://github.com/guavabot) #4
+- [@evant](https://github.com/evant) #10
+- [@daveRanjan](https://github.com/daveRanjan) #18
+
