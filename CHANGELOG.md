@@ -1,3 +1,7 @@
+Release 20170219
+----------------
+* 2017-02-19: Ignores java beans style if not all properties comply.
+
 Release 20170208
 ----------------
 * 2017-02-08: Ignores `android.os.Parcelable` and `java.util.*` from interface method generation. [#14](https://github.com/afcastano/AutoValuePlugin/issues/14)
