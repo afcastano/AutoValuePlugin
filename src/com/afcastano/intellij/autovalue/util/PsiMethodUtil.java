@@ -91,34 +91,4 @@ public class PsiMethodUtil {
         return abstractGetters;
     }
 
-    public static class GetterProperties {
-        public String methodName;
-        public String setterName;
-        public String setterParameterName;
-
-        private GetterProperties(PsiMethod getter) {
-            this.methodName = getter.getName();
-            this.setterName = this.methodName;
-            this.setterParameterName = this.setterName;
-
-            if (this.methodName.startsWith("get") && this.methodName.length() > 3) {
-                if (Character.isUpperCase(this.methodName.charAt(3))) {
-                    this.setterName = this.methodName.replaceFirst("get", "set");
-                    this.setterParameterName = this.setterName.replaceFirst("set", "new");
-                }
-
-            } else if (this.methodName.startsWith("is") && this.methodName.length() > 2) {
-                if (Character.isUpperCase(this.methodName.charAt(2))) {
-                    this.setterName = this.methodName.replaceFirst("is", "set");
-                    this.setterParameterName = this.setterName.replaceFirst("set", "new");
-                }
-            }
-
-        }
-
-        public static GetterProperties fromGetter(PsiMethod getter) {
-            return new GetterProperties(getter);
-        }
-
-    }
 }

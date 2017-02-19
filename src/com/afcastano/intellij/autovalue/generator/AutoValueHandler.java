@@ -1,8 +1,10 @@
 package com.afcastano.intellij.autovalue.generator;
 
 import com.afcastano.intellij.autovalue.constants.ActionType;
+import com.afcastano.intellij.autovalue.util.typeproperties.SetterProperties;
 import com.afcastano.intellij.autovalue.util.PsiClassUtil;
 import com.afcastano.intellij.autovalue.util.PsiMethodUtil;
+import com.afcastano.intellij.autovalue.util.typeproperties.TargetClassProperties;
 import com.afcastano.intellij.autovalue.util.validation.ValidationUtil;
 import com.afcastano.intellij.autovalue.util.validation.HandlerValidator;
 import com.intellij.codeInsight.CodeInsightActionHandler;
@@ -156,7 +158,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
             public void run() {
                 final PsiMethod createMethod = newCreateMethod(factory, targetClass);
 
-                List<PsiMethod> allGetters = getThisClassGetters(factory, targetClass);
+                List<PsiMethod> allGetters = getThisClassGetters(targetClass);
                 PsiMethod lastMethod = allGetters.size() > 0 ? allGetters.get(allGetters.size() - 1) : null;
 
                 if (type == ActionType.GENERATE_CREATE_METHOD) {
@@ -192,18 +194,18 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     }
 
     private PsiMethod generateCreateMethodWithBuilder(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = PsiClassUtil.getAbstractGetters(targetClass);
-        return factory.newCreateMethodWithBuilder(abstractGetters);
+        TargetClassProperties targetClassProperties = TargetClassProperties.fromPsiClass(targetClass);
+        return factory.newCreateMethodWithBuilder(targetClassProperties);
     }
 
     private PsiMethod generateCreateMethodWhenNoBuilder(AutoValueFactory factory, PsiClass targetClass) {
-        final List<PsiMethod> abstractGetters = PsiClassUtil.getAbstractGetters(targetClass);
-        return factory.newCreateMethodWhenNoBuilder(abstractGetters);
+        TargetClassProperties targetClassProperties = TargetClassProperties.fromPsiClass(targetClass);
+        return factory.newCreateMethodWhenNoBuilder(targetClassProperties);
     }
 
 
 
-    private static List<PsiMethod> getThisClassGetters(AutoValueFactory factory, PsiClass targetClass) {
+    private static List<PsiMethod> getThisClassGetters(PsiClass targetClass) {
         final List<PsiMethod> abstractGetters = new ArrayList<>();
         for (PsiMethod psiMethod : targetClass.getMethods()) {
             if (PsiMethodUtil.isGetter(psiMethod)) {
@@ -216,10 +218,11 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     @NotNull
     private static List<PsiMethod> generateMissingMethods(AutoValueFactory factory, PsiClass targetClass, PsiClass builderClass) {
         final List<PsiMethod> pendingBuilderMethods = new ArrayList<>();
+        TargetClassProperties classProperties = TargetClassProperties.fromPsiClass(targetClass);
 
-        for (PsiMethod psiMethod : PsiClassUtil.getAbstractGetters(targetClass)) {
-            if (!PsiClassUtil.alreadyInBuilder(builderClass, psiMethod)) {
-                pendingBuilderMethods.add(factory.newBuilderSetter(psiMethod));
+        for (SetterProperties setter : classProperties.getSettersFromGetters()) {
+            if (!PsiClassUtil.alreadyInBuilder(builderClass, setter)) {
+                pendingBuilderMethods.add(factory.newBuilderSetter(setter));
             }
         }
         return pendingBuilderMethods;

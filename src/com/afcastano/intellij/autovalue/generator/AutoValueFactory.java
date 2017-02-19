@@ -1,7 +1,9 @@
 package com.afcastano.intellij.autovalue.generator;
 
+import com.afcastano.intellij.autovalue.util.typeproperties.SetterProperties;
 import com.afcastano.intellij.autovalue.util.PsiClassUtil;
 import com.afcastano.intellij.autovalue.util.PsiMethodUtil;
+import com.afcastano.intellij.autovalue.util.typeproperties.TargetClassProperties;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -106,27 +108,23 @@ public class AutoValueFactory {
         return builderClass;
     }
 
-    public PsiMethod newCreateMethodWithBuilder(List<PsiMethod> abstractGetters) {
+    public PsiMethod newCreateMethodWithBuilder(TargetClassProperties targetClassProperties) {
         final PsiMethod method = factory.createMethod("create", getTargetType());
         method.getModifierList().setModifierProperty("public", true);
         method.getModifierList().setModifierProperty("static", true);
 
-        ArrayList<PsiMethodUtil.GetterProperties> properties = new ArrayList<>();
-
-        for (PsiMethod getter : abstractGetters) {
-            PsiMethodUtil.GetterProperties propertyNames = PsiMethodUtil.GetterProperties.fromGetter(getter);
-            PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
-                    getter.getReturnType());
+        List<SetterProperties> properties = targetClassProperties.getSettersFromGetters();
+        for (SetterProperties getter : properties) {
+            PsiParameter parameter = factory.createParameter(getter.getParameterName(),
+                    getter.getParameterType());
 
             method.getParameterList().add(parameter);
-            properties.add(propertyNames);
-
         }
 
         String builderChain = "";
 
-        for (PsiMethodUtil.GetterProperties property : properties) {
-            builderChain = builderChain + "." + property.setterName + "(" + property.setterParameterName + ")\n";
+        for (SetterProperties property : properties) {
+            builderChain = builderChain + "." + property.getName() + "(" + property.getParameterName() + ")\n";
         }
 
         String returnStatementText = "return builder()\n" + builderChain + ".build();";
@@ -138,20 +136,18 @@ public class AutoValueFactory {
     }
 
 
-    public PsiMethod newCreateMethodWhenNoBuilder(List<PsiMethod> abstractGetters) {
+    public PsiMethod newCreateMethodWhenNoBuilder(TargetClassProperties targetClassProperties) {
         final PsiMethod method = factory.createMethod("create", getTargetType());
         method.getModifierList().setModifierProperty("public", true);
         method.getModifierList().setModifierProperty("static", true);
 
         ArrayList<String> paramNames = new ArrayList<>();
-
-        for (PsiMethod getter : abstractGetters) {
-            PsiMethodUtil.GetterProperties propertyNames = PsiMethodUtil.GetterProperties.fromGetter(getter);
-            PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
-                    getter.getReturnType());
+        for (SetterProperties properties : targetClassProperties.getSettersFromGetters()) {
+            PsiParameter parameter = factory.createParameter(properties.getParameterName(),
+                    properties.getParameterType());
 
             method.getParameterList().add(parameter);
-            paramNames.add(propertyNames.setterParameterName);
+            paramNames.add(properties.getParameterName());
 
         }
 
@@ -173,12 +169,10 @@ public class AutoValueFactory {
         return method;
     }
 
-    public PsiMethod newBuilderSetter(PsiMethod getterMethod) {
-        PsiMethodUtil.GetterProperties propertyNames = PsiMethodUtil.GetterProperties.fromGetter(getterMethod);
-
-        final PsiMethod method = factory.createMethod(propertyNames.setterName, getBuilderType());
-        PsiParameter parameter = factory.createParameter(propertyNames.setterParameterName,
-                getterMethod.getReturnType());
+    public PsiMethod newBuilderSetter(SetterProperties setterMethod) {
+        final PsiMethod method = factory.createMethod(setterMethod.getName(), getBuilderType());
+        PsiParameter parameter = factory.createParameter(setterMethod.getParameterName(),
+                setterMethod.getParameterType());
 
         method.getParameterList().add(parameter);
         method.getBody().delete();

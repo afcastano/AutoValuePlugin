@@ -1,6 +1,6 @@
 package com.afcastano.intellij.autovalue.util;
 
-import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
+import com.afcastano.intellij.autovalue.util.typeproperties.SetterProperties;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -92,9 +92,9 @@ public class PsiClassUtil {
         return abstractGetters;
     }
 
-    public static boolean alreadyInBuilder(PsiClass builderClass, PsiMethod psiMethod) {
+    public static boolean alreadyInBuilder(PsiClass builderClass, SetterProperties setter) {
         for (PsiMethod method : builderClass.getAllMethods()) {
-            if (PsiMethodUtil.isBuilderSetter(method) && method.getName().equals(psiMethod.getName())) {
+            if (PsiMethodUtil.isBuilderSetter(method) && method.getName().equals(setter.getName())) {
                 return true;
             }
         }

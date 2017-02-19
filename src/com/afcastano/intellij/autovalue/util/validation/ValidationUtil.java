@@ -1,8 +1,10 @@
 package com.afcastano.intellij.autovalue.util.validation;
 
 import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
+import com.afcastano.intellij.autovalue.util.typeproperties.SetterProperties;
 import com.afcastano.intellij.autovalue.util.PsiClassUtil;
 import com.afcastano.intellij.autovalue.util.PsiMethodUtil;
+import com.afcastano.intellij.autovalue.util.typeproperties.TargetClassProperties;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
@@ -17,8 +19,11 @@ public class ValidationUtil {
         if (builderClass == null) {
             return false;
         }
-        for (PsiMethod psiMethod : PsiClassUtil.getAbstractGetters(factory.getTargetClass())) {
-            if (!PsiClassUtil.alreadyInBuilder(builderClass, psiMethod)) {
+
+        TargetClassProperties classProperties = TargetClassProperties.fromPsiClass(factory.getTargetClass());
+
+        for (SetterProperties properties: classProperties.getSettersFromGetters()) {
+            if (!PsiClassUtil.alreadyInBuilder(builderClass, properties)) {
                 return false;
             }
         }
@@ -52,10 +57,10 @@ public class ValidationUtil {
             parameterNames.add(parameter.getName());
         }
 
-        for (PsiMethod psiMethod : PsiClassUtil.getAbstractGetters(targetClass)) {
-            PsiMethodUtil.GetterProperties prop = PsiMethodUtil.GetterProperties.fromGetter(psiMethod);
+        TargetClassProperties targetClassProperties = TargetClassProperties.fromPsiClass(targetClass);
 
-            if (!parameterNames.contains(prop.setterParameterName)) {
+        for (SetterProperties setter : targetClassProperties.getSettersFromGetters()) {
+            if (!parameterNames.contains(setter.getName())) {
                 return false;
             }
         }

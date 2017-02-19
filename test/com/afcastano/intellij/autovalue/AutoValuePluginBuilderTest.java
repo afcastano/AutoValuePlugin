@@ -123,6 +123,13 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
 
     }
 
+    public void testMixedJavaBeanStyle() {
+        utils.runGenerateBuilderActions("generatebuilder/mixedjavabeanstyle/Test_expected.java",
+                "generatebuilder/mixedjavabeanstyle/Test.java",
+                AUTOVALUE);
+
+    }
+
 
     public void testBasicAutoParcel() {
         utils.runGenerateBuilderActions("generatebuilder/basicautoparcel/Test_expected.java",
