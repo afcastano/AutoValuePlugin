@@ -7,17 +7,7 @@ import com.afcastano.intellij.autovalue.util.typeproperties.TargetClassPropertie
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiStatement;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +82,9 @@ public class AutoValueFactory {
 
             } else {
 
-                final PsiClass newBuilderClass = factory.createClass("Builder");
+                PsiClass newBuilderClass = PsiClassUtil.createClass(project, "Builder",
+                        targetClass.getTypeParameters());
+
                 PsiModifierList modifierList = newBuilderClass.getModifierList();
                 modifierList.setModifierProperty("public", true);
                 modifierList.setModifierProperty("abstract", true);
@@ -170,7 +162,8 @@ public class AutoValueFactory {
     }
 
     public PsiMethod newBuilderSetter(SetterProperties setterMethod) {
-        final PsiMethod method = factory.createMethod(setterMethod.getName(), getBuilderType());
+        String builderClassName = PsiClassUtil.getClassName(getBuilderClass());
+        PsiMethod method = factory.createMethodFromText(builderClassName + " " + setterMethod.getName() + "(){}", null);
         PsiParameter parameter = factory.createParameter(setterMethod.getParameterName(),
                 setterMethod.getParameterType());
 
@@ -188,7 +181,8 @@ public class AutoValueFactory {
             this.buildMehtod = buildMethods[0];
 
         } else {
-            final PsiMethod newBuildMethod = factory.createMethod("build", getTargetType());
+            String className = PsiClassUtil.getClassName(targetClass);
+            PsiMethod newBuildMethod = factory.createMethodFromText(className + " build(){}", null);
             newBuildMethod.getBody().delete();
             newBuildMethod.getModifierList().setModifierProperty("public", true);
             newBuildMethod.getModifierList().setModifierProperty("abstract", true);
@@ -201,7 +195,11 @@ public class AutoValueFactory {
     }
 
     public PsiMethod newBuilderFactoryMethod() {
-        final PsiMethod builderMethod = factory.createMethod("builder", getBuilderType());
+        String builderName = PsiClassUtil.getClassName(getBuilderClass());
+        String builderTypeParameters = PsiClassUtil.getTypeParameterString(getBuilderClass().getTypeParameters());
+        String methodText = builderTypeParameters + " " + builderName + " builder(){}";
+
+        PsiMethod builderMethod = factory.createMethodFromText(methodText.trim(), null);
         builderMethod.getModifierList().setModifierProperty("public", true);
         builderMethod.getModifierList().setModifierProperty("static", true);
 

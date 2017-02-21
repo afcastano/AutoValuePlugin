@@ -1,7 +1,10 @@
 package com.afcastano.intellij.autovalue.util;
 
 import com.afcastano.intellij.autovalue.util.typeproperties.SetterProperties;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -129,6 +132,63 @@ public class PsiClassUtil {
         PsiElement element = javaFile.findElementAt(caretOffset);
 
         return PsiTreeUtil.getParentOfType(element, PsiClass.class);
+    }
+
+    public static PsiClass createClass(Project project, String className, PsiTypeParameter[] typeParameters) {
+        PsiClass newClass = JavaPsiFacade.getElementFactory(project).createClass(className);
+
+        if (typeParameters.length > 0) {
+            newClass = createParameterisedClass(project, className, typeParameters);
+        }
+
+        return newClass;
+    }
+
+    private static PsiClass createParameterisedClass(Project project,
+                                                    String className, PsiTypeParameter[] typeParameters) {
+
+        String fullClassName = getParameterisedClassName(className, typeParameters);
+        String classContent = "class "+ fullClassName + "{}";
+        return createJavaClass(project, className, classContent);
+    }
+
+    public static String getClassName(PsiClass psiClass) {
+        if(!psiClass.hasTypeParameters()) {
+            return psiClass.getName();
+        }
+
+        return getParameterisedClassName(psiClass.getName(), psiClass.getTypeParameters());
+    }
+
+    public static String getTypeParameterString(PsiTypeParameter[] typeParameters) {
+        if (typeParameters.length > 0) {
+
+            List<String> typeParamStr = new ArrayList<>();
+            for(PsiTypeParameter tp: typeParameters) {
+                typeParamStr.add(tp.getName());
+            }
+
+            String paramStr = StringUtil.join(typeParamStr, ", ");
+            return "<" + paramStr + ">";
+        }
+
+        return "";
+    }
+
+    @NotNull
+    private static String getParameterisedClassName(String name, PsiTypeParameter[] typeParameters) {
+        return name + getTypeParameterString(typeParameters);
+    }
+
+    private static PsiClass createJavaClass(Project project, String className, String classContent) {
+        PsiClass newBuilderClass;
+        PsiJavaFile psiFile = (PsiJavaFile) PsiFileFactory.getInstance(project)
+                .createFileFromText(className + ".java",
+                JavaFileType.INSTANCE,
+                classContent);
+
+        newBuilderClass = psiFile.getClasses()[0];
+        return newBuilderClass;
     }
 
 }
