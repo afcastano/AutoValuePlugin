@@ -1,15 +1,6 @@
 package com.afcastano.intellij.autovalue;
 
-import com.afcastano.intellij.autovalue.actions.GenerateAutoValueBuilderAction;
-import com.afcastano.intellij.autovalue.actions.GenerateAutoValueCreateAction;
-import com.afcastano.intellij.autovalue.actions.UpdateGeneratedMethodsAction;
-import com.afcastano.intellij.autovalue.intentions.AddBuilderIntention;
-import com.afcastano.intellij.autovalue.intentions.AddCreateMethodIntention;
-import com.afcastano.intellij.autovalue.intentions.UpdateGeneratedMethodsIntention;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NonNls;
 
 import static com.afcastano.intellij.autovalue.AutoValuePluginTestUtils.AUTOVALUE;
 
@@ -35,6 +26,12 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGeneratCreateMethodIgnoresToBuilder() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/generateignorestobuilder/BasicTestFile_expected.java",
+                "generatecreatemethod/generateignorestobuilder/BasicTestFile.java",
+                AUTOVALUE);
+    }
+
 
     public void testGenerateBasicCreateMethodWorksWhenBuilderExists() {
         utils.runGenerateCreateMethodActions("generatecreatemethod/builderexist/Test_expected.java",
@@ -42,9 +39,21 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGenerateBasicCreateMethodWithBuilderIgnoresToBuilder() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/builderexistignorestobuilder/Test_expected.java",
+                "generatecreatemethod/builderexistignorestobuilder/Test.java",
+                AUTOVALUE);
+    }
+
     public void testUpdateWhenAddNewPropertyAtTheEnd() {
         utils.runUpdateMethodsActions("generatecreatemethod/addNewPropertyAtTheEnd/Test_expected.java",
                 "generatecreatemethod/addNewPropertyAtTheEnd/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testUpdateIgnoresBuilder() {
+        utils.runUpdateMethodsActions("generatecreatemethod/upadteignorestobuilder/Test_expected.java",
+                "generatecreatemethod/upadteignorestobuilder/Test.java",
                 AUTOVALUE);
     }
 
@@ -102,6 +111,24 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 AUTOVALUE);
     }
 
+    public void testGenerateBuilderWithInterfaceHierarchy() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/withinterfacehierarchy/BasicTestFile_expected.java",
+                "generatecreatemethod/withinterfacehierarchy/BasicTestFile.java",
+                "test/Interface1.java",
+                "test/i2/Interface2.java",
+                "test/i3/Interface3.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBuilderWithInterfaceIgnoringBlacklisted() {
+        utils.runGenerateCreateMethodActions("generatecreatemethod/withinterfaceignoresblacklisted/BasicTestFile_expected.java",
+                "generatecreatemethod/withinterfaceignoresblacklisted/BasicTestFile.java",
+                "test/Interface1.java",
+                "java/util/Map.java",
+                "android/os/Parcelable.java",
+                AUTOVALUE);
+    }
+  
     public void testGenerateCreateMethodWhenBuilderExists_WithGenerics() {
         utils.runUpdateMethodsActions("generatecreatemethod/genericsBuilderExists/Test_expected.java",
                 "generatecreatemethod/genericsBuilderExists/Test.java",
@@ -113,5 +140,6 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
                 "generatecreatemethod/generics/Test.java",
                 AUTOVALUE);
     }
+
 
 }

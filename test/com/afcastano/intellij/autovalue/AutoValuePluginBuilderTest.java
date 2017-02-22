@@ -89,6 +89,20 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
 
     }
 
+    public void testIngoreToBuilderMethodWhenAdding() {
+        utils.runUpdateMethodsActions("generatebuilder/ignoretobuilderwhenadding/Test_expected.java",
+                "generatebuilder/ignoretobuilderwhenadding/Test.java",
+                AUTOVALUE);
+
+    }
+
+    public void testIngoreToBuilderMethodFirstTime() {
+        utils.runGenerateBuilderActions("generatebuilder/ignoretobuilderfirsttime/Test_expected.java",
+                "generatebuilder/ignoretobuilderfirsttime/Test.java",
+                AUTOVALUE);
+
+    }
+
     public void testAddBuilderFactory() {
         utils.runUpdateMethodsActions("generatebuilder/addbuilderfactory/Test_expected.java",
                 "generatebuilder/addbuilderfactory/Test.java",
@@ -105,6 +119,13 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
     public void testJavaBeanStyle() {
         utils.runGenerateBuilderActions("generatebuilder/javabeanstyle/Test_expected.java",
                 "generatebuilder/javabeanstyle/Test.java",
+                AUTOVALUE);
+
+    }
+
+    public void testMixedJavaBeanStyle() {
+        utils.runGenerateBuilderActions("generatebuilder/mixedjavabeanstyle/Test_expected.java",
+                "generatebuilder/mixedjavabeanstyle/Test.java",
                 AUTOVALUE);
 
     }
@@ -140,6 +161,31 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
     public void testGenerateBuilder_WithGenerics() {
         utils.runUpdateMethodsActions("generatebuilder/generics/Test_expected.java",
                 "generatebuilder/generics/Test.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBuilderWithInterfaceCorrectly() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterface/BasicTestFile_expected.java",
+                "generatebuilder/withinterface/BasicTestFile.java",
+                "test/Interface1.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBuilderWithInterfaceIgnoringBlacklistedCorrectly() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterfaceignoresblacklisted/BasicTestFile_expected.java",
+                "generatebuilder/withinterfaceignoresblacklisted/BasicTestFile.java",
+                "test/Interface1.java",
+                "java/util/Map.java",
+                "android/os/Parcelable.java",
+                AUTOVALUE);
+    }
+
+    public void testGenerateBuilderWithInterfaceHierarchy() {
+        utils.runGenerateBuilderActions("generatebuilder/withinterfacehierarchy/BasicTestFile_expected.java",
+                "generatebuilder/withinterfacehierarchy/BasicTestFile.java",
+                "test/Interface1.java",
+                "test/i2/Interface2.java",
+                "test/i3/Interface3.java",
                 AUTOVALUE);
     }
 

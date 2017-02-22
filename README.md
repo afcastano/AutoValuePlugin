@@ -12,14 +12,16 @@ ___
 AutoValue is awesome.
 I can't explain it better than [that](https://github.com/google/auto/blob/master/value/userguide/index.md), or [that](https://docs.google.com/presentation/d/14u_h-lMn7f1rXE1nDiLX0azS3IkgjGl5uxp5jGJ75RE/edit#slide=id.g2a5e9c4a8_00).
 
-### Functionality:
+### Contribute:
+If you want to contribute, follow this [guide.](https://github.com/afcastano/AutoValuePlugin/blob/master/docs/CONTRIBUTE.md)
 
+### Functionality:
 - Adds an @AutoValue.Builder static class inside the target @AutoValue class.
 - Searches for all abstract getters on the target class and transforms it into builder methods in the builder.
 - Creates a static builder method that returns the @AutoValue.Builder instance.
 - Optionally, generates the [create](https://github.com/google/auto/blob/master/value/userguide/index.md#in-your-value-class) factory method. [See #11](https://github.com/afcastano/AutoValuePlugin/issues/11)
 - If the builder exists, it will either add the missing properties to it or remove the ones that are not needed any more.
-- It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson). Thanks to [@vjames19](https://github.com/vjames19)!
+- It also supports [AutoParcel](https://github.com/frankiesardo/auto-parcel) and [AutoParceGson](https://github.com/evant/auto-parcel-gson).
 
 ### How to use:
 
@@ -28,3 +30,10 @@ The plugin adds new context menu actions, [code generation actions](https://www.
 There are also other ways of using the plugin. Here is a short tutorial video (1:25 mins):
 
 https://www.youtube.com/watch?v=sMX9PT3ecu8
+
+### A big THANK YOU to these contributors:
+- [@vjames19](https://github.com/vjames19) - Pull request [#2](https://github.com/afcastano/AutoValuePlugin/pull/2)
+- [@guavabot](https://github.com/guavabot) - Pull request [#4](https://github.com/afcastano/AutoValuePlugin/pull/4)
+- [@evant](https://github.com/evant) - Pull request [#10](https://github.com/afcastano/AutoValuePlugin/pull/10)
+- [@daveRanjan](https://github.com/daveRanjan) - Pull request [#18](https://github.com/afcastano/AutoValuePlugin/pull/18)
+

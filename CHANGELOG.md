@@ -1,3 +1,20 @@
+Release 20170219
+----------------
+* 2017-02-19: Ignores java beans style if not all properties comply.
+
+Release 20170208
+----------------
+* 2017-02-08: Ignores `android.os.Parcelable` and `java.util.*` from interface method generation. [#14](https://github.com/afcastano/AutoValuePlugin/issues/14)
+
+Release 20170203
+-------
+* 2017-02-03: Ignores `toBuilder` based on return type. [#15](https://github.com/afcastano/AutoValuePlugin/issues/15)
+
+Release 20170130
+-------
+* 2017-01-30: Added support for interfaces.[#14](https://github.com/afcastano/AutoValuePlugin/issues/14)
+* 2017-01-30: Ignore `toBuilder` method when generating. [#15](https://github.com/afcastano/AutoValuePlugin/issues/15)
+
 Release 20160728
 -------
 * 2016-07-28: Improved the way create method is generated according to [#11](https://github.com/afcastano/AutoValuePlugin/issues/11)

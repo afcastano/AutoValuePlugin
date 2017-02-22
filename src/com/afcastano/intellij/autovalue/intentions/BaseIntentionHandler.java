@@ -34,7 +34,7 @@ public abstract class BaseIntentionHandler extends AbstractIntentionAction imple
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         try {
             AutoValueFactory factory = new AutoValueFactory(project, editor, file);
-            return handler.shouldHandle(factory);
+            return handler.getValidator().shouldHandle(factory);
 
         } catch (RuntimeException ex) {
             return false;

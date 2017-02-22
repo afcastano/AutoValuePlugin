@@ -30,9 +30,9 @@ public abstract class TestAuto {
             public abstract static class Builder {
                 public abstract Builder aja(Date aja);
 
-                public abstract Builder setIntValue(int newIntValue);
+                public abstract Builder getIntValue(int getIntValue);
 
-                public abstract Builder setSomething(Boolean newSomething);
+                public abstract Builder isSomething(Boolean isSomething);
 
                 public abstract LastInner build();
             }
