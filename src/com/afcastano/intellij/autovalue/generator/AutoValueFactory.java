@@ -129,7 +129,13 @@ public class AutoValueFactory {
 
 
     public PsiMethod newCreateMethodWhenNoBuilder(TargetClassProperties targetClassProperties) {
-        final PsiMethod method = factory.createMethod("create", getTargetType());
+
+        String targetClassName = PsiClassUtil.getClassName(targetClass);
+        String builderTypeParameters = PsiClassUtil.getTypeParameterString(targetClass.getTypeParameters());
+        String methodText = builderTypeParameters + " " + targetClassName + " create(){}";
+
+        PsiMethod method = factory.createMethodFromText(methodText.trim(), null);
+
         method.getModifierList().setModifierProperty("public", true);
         method.getModifierList().setModifierProperty("static", true);
 
@@ -224,15 +230,6 @@ public class AutoValueFactory {
 
         String autoValueAnnotationName = StringUtil.getShortName(autoValueAnnotation.getQualifiedName());
         return autoValueAnnotationName + "_" + generatedName;
-    }
-
-    public PsiType getBuilderType() {
-
-        if (builderType == null) {
-            this.builderType = factory.createType(getBuilderClass());
-        }
-
-        return builderType;
     }
 
     @Nullable
