@@ -130,13 +130,13 @@ public class AutoValuePluginCreateMethodTest extends LightCodeInsightFixtureTest
     }
   
     public void testGenerateCreateMethodWhenBuilderExists_WithGenerics() {
-        utils.runUpdateMethodsActions("generatecreatemethod/genericsBuilderExists/Test_expected.java",
+        utils.runGenerateCreateMethodActions("generatecreatemethod/genericsBuilderExists/Test_expected.java",
                 "generatecreatemethod/genericsBuilderExists/Test.java",
                 AUTOVALUE);
     }
 
     public void testGenerateCreateMethod_WithGenerics() {
-        utils.runUpdateMethodsActions("generatecreatemethod/generics/Test_expected.java",
+        utils.runGenerateCreateMethodActions("generatecreatemethod/generics/Test_expected.java",
                 "generatecreatemethod/generics/Test.java",
                 AUTOVALUE);
     }

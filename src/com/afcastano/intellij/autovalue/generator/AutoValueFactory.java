@@ -101,9 +101,7 @@ public class AutoValueFactory {
     }
 
     public PsiMethod newCreateMethodWithBuilder(TargetClassProperties targetClassProperties) {
-        final PsiMethod method = factory.createMethod("create", getTargetType());
-        method.getModifierList().setModifierProperty("public", true);
-        method.getModifierList().setModifierProperty("static", true);
+        PsiMethod method = PsiMethodUtil.newStaticMethod("create", targetClass, factory);
 
         List<SetterProperties> properties = targetClassProperties.getSettersFromGetters();
         for (SetterProperties getter : properties) {
@@ -119,7 +117,15 @@ public class AutoValueFactory {
             builderChain = builderChain + "." + property.getName() + "(" + property.getParameterName() + ")\n";
         }
 
-        String returnStatementText = "return builder()\n" + builderChain + ".build();";
+
+        String builderFactoryName = "builder";
+
+        if (targetClass.hasTypeParameters()) {
+            String typeParams = PsiClassUtil.getTypeParameterString(targetClass.getTypeParameters());
+            builderFactoryName = targetClass.getName() + "." + typeParams + "builder";
+        }
+
+        String returnStatementText = "return " + builderFactoryName + "()\n" + builderChain + ".build();";
 
         PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
 
@@ -130,14 +136,7 @@ public class AutoValueFactory {
 
     public PsiMethod newCreateMethodWhenNoBuilder(TargetClassProperties targetClassProperties) {
 
-        String targetClassName = PsiClassUtil.getClassName(targetClass);
-        String builderTypeParameters = PsiClassUtil.getTypeParameterString(targetClass.getTypeParameters());
-        String methodText = builderTypeParameters + " " + targetClassName + " create(){}";
-
-        PsiMethod method = factory.createMethodFromText(methodText.trim(), null);
-
-        method.getModifierList().setModifierProperty("public", true);
-        method.getModifierList().setModifierProperty("static", true);
+        PsiMethod method = PsiMethodUtil.newStaticMethod("create", targetClass, factory);
 
         ArrayList<String> paramNames = new ArrayList<>();
         for (SetterProperties properties : targetClassProperties.getSettersFromGetters()) {
@@ -159,7 +158,7 @@ public class AutoValueFactory {
             paramList = paramList.substring(0, paramList.length() - 2);
         }
 
-        String returnStatementText = "return new " + getAutoValueClassName() + "(" + paramList + ");";
+        String returnStatementText = "return new " + getAutoValueClassName(false) + "(" + paramList + ");";
 
         PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
 
@@ -201,16 +200,16 @@ public class AutoValueFactory {
     }
 
     public PsiMethod newBuilderFactoryMethod() {
-        String builderName = PsiClassUtil.getClassName(getBuilderClass());
-        String builderTypeParameters = PsiClassUtil.getTypeParameterString(getBuilderClass().getTypeParameters());
-        String methodText = builderTypeParameters + " " + builderName + " builder(){}";
+        PsiMethod builderMethod = PsiMethodUtil.newStaticMethod("builder", getBuilderClass(), factory);
 
-        PsiMethod builderMethod = factory.createMethodFromText(methodText.trim(), null);
-        builderMethod.getModifierList().setModifierProperty("public", true);
-        builderMethod.getModifierList().setModifierProperty("static", true);
+        String autoValueClassName = getAutoValueClassName(true);
+        String builderPart = ".Builder();";
 
-        String autoValueClassName = getAutoValueClassName();
-        String returnStatementText = "return new " + autoValueClassName + ".Builder();";
+        if(getBuilderClass().hasTypeParameters()) {
+            builderPart = ".Builder<>();";
+        }
+
+        String returnStatementText = "return new " + autoValueClassName + builderPart;
 
         PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
 
@@ -219,14 +218,19 @@ public class AutoValueFactory {
     }
 
     @NotNull
-    private String getAutoValueClassName() {
+    private String getAutoValueClassName(boolean useAsQualifier) {
         String generatedName = "";
 
         for (PsiClass parent : PsiClassUtil.findAllParents(getTargetClass())) {
             generatedName = generatedName + parent.getName() + "_";
         }
 
-        generatedName = generatedName + getTargetClass().getName();
+        if(getTargetClass().hasTypeParameters() && !useAsQualifier) {
+            generatedName = generatedName + getTargetClass().getName() + "<>";
+        } else {
+            generatedName = generatedName + getTargetClass().getName();
+        }
+
 
         String autoValueAnnotationName = StringUtil.getShortName(autoValueAnnotation.getQualifiedName());
         return autoValueAnnotationName + "_" + generatedName;

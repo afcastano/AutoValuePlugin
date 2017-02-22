@@ -2,9 +2,7 @@ package com.afcastano.intellij.autovalue.util;
 
 import com.afcastano.intellij.autovalue.generator.AutoValueFactory;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ImmutableList;
 
@@ -89,6 +87,17 @@ public class PsiMethodUtil {
         }
 
         return abstractGetters;
+    }
+
+    public static PsiMethod newStaticMethod(String methodName, PsiClass returnClass, PsiElementFactory factory) {
+        String returnTypeName = PsiClassUtil.getClassName(returnClass);
+        String returnTypeParameters = PsiClassUtil.getTypeParameterString(returnClass.getTypeParameters());
+        String methodText = returnTypeParameters + " " + returnTypeName + " " + methodName + "(){}";
+
+        PsiMethod method = factory.createMethodFromText(methodText.trim(), null);
+        method.getModifierList().setModifierProperty("public", true);
+        method.getModifierList().setModifierProperty("static", true);
+        return method;
     }
 
 }

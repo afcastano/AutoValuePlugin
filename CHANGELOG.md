@@ -1,3 +1,7 @@
+Release 20170223
+----------------
+* 2017-02-23: Added support for generics.
+
 Release 20170219
 ----------------
 * 2017-02-19: Ignores java beans style if not all properties comply.

@@ -159,7 +159,7 @@ public class AutoValuePluginBuilderTest extends LightCodeInsightFixtureTestCase 
     }
 
     public void testGenerateBuilder_WithGenerics() {
-        utils.runUpdateMethodsActions("generatebuilder/generics/Test_expected.java",
+        utils.runGenerateBuilderActions("generatebuilder/generics/Test_expected.java",
                 "generatebuilder/generics/Test.java",
                 AUTOVALUE);
     }
