@@ -7,6 +7,7 @@ import com.intellij.codeInsight.intention.AbstractIntentionAction;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,11 @@ public abstract class BaseIntentionHandler extends AbstractIntentionAction imple
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         handler.invoke(project, editor, psiFile);
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+        return true;
     }
 
     @Override
