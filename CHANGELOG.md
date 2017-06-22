@@ -1,3 +1,7 @@
+Release 20170622
+----------------
+* 2017-06-22: Specify write action on intentions
+
 Release 20170223
 ----------------
 * 2017-02-23: Added support for generics.
