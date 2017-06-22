@@ -9,6 +9,8 @@ According to the [official guidelines](https://www.jetbrains.com/help/idea/2016.
 3. Optionally, [download](http://www.jetbrains.org/display/IJOS/Download) the IntelliJ IDEA Community Edition sources. This will make debugging your plugins much easier.
 4. You also need to configure IntelliJ Platform Plugin SDK. Instructions [here](https://www.jetbrains.com/help/idea/2016.3/configuring-intellij-platform-plugin-sdk.html)
 
+>**NOTE:** Despite the plugin works on the latest version of IntelliJ, to run the tests you need to use the [SDK 2016.3](https://www.jetbrains.com/idea/download/previous.html) in the previous step. If you use 2017.1 the tests will throw an error. There is a question open in the [JetBrains support forum](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000389964-SDK-2017-1-cannot-modify-a-read-only-file-using-JavaCodeInsightTestFixture) if you want to track it.
+
 ### IDE Set up
 
 1. Open up IntelliJ and select *Create project from version control*
